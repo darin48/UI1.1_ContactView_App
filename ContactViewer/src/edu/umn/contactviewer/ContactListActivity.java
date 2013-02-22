@@ -23,6 +23,7 @@ public class ContactListActivity extends ListActivity {
         ToolbarConfig toolbar = new ToolbarConfig(this, "Contacts");
 
 	    // setup the about button
+        // Darin's test comment to delete
 	    Button button = toolbar.getToolbarRightButton();
 	    button.setText("About");
 		button.setOnClickListener(new View.OnClickListener() {
