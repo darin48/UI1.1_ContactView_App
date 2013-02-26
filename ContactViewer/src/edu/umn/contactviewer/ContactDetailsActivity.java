@@ -2,9 +2,13 @@ package edu.umn.contactviewer;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +25,6 @@ public class ContactDetailsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
 
-        ToolbarConfig toolbar = new ToolbarConfig(this, "Contacts");
         contact = (Contact)getIntent().getSerializableExtra("contact");
         TextView nameView = (TextView)findViewById(R.id.name_value);
         TextView titleView = (TextView)findViewById(R.id.title_value);
@@ -29,6 +32,31 @@ public class ContactDetailsActivity extends Activity {
         TextView emailView = (TextView)findViewById(R.id.email_value);
         TextView twitterIdView = (TextView)findViewById(R.id.twitterId_value);
         nameView.setText(contact.getName());
+        titleView.setText(contact.getTitle());
+        phoneView.setText(contact.getPhone());
+        emailView.setText(contact.getEmail());
+        twitterIdView.setText(contact.getTwitterId());
+        ToolbarConfig toolbar = new ToolbarConfig(this, contact.getName());
+        Button button = toolbar.getToolbarRightButton();
+        button.setText("Edit");
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ContactDetailsActivity.this, "This would edit contact " + contact.getName(), Toast.LENGTH_LONG).show();
+            }
+        });
+        Button backButton = (Button)findViewById(R.id.back_button);
+        backButton.setText("Edit");
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("contact", contact);
+                returnIntent.putExtra("contactIndex", getIntent().getIntExtra("contactIndex", -1));
+                ContactDetailsActivity.this.setResult(RESULT_OK, returnIntent);
+                finish();
+            }
+        });
     }
 
  //   @Override

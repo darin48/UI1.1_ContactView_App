@@ -12,7 +12,7 @@
         <TextView android:id="@+id/name_label"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="Name"
+                  android:text="Name:"
                   android:padding="8dp"/>
         <TextView android:id="@+id/name_value"
                   android:layout_width="wrap_content"
@@ -25,7 +25,7 @@
         <TextView android:id="@+id/title_label"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="Title"
+                  android:text="Title:"
                   android:padding="8dp"/>
         <TextView android:id="@+id/title_value"
                   android:layout_width="wrap_content"
@@ -38,7 +38,7 @@
         <TextView android:id="@+id/phone_label"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="Phone"
+                  android:text="Phone:"
                   android:padding="8dp"/>
         <TextView android:id="@+id/phone_value"
                   android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
         <TextView android:id="@+id/email_label"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="Email"
+                  android:text="Email:"
                   android:padding="8dp"/>
         <TextView android:id="@+id/email_value"
                   android:layout_width="wrap_content"
@@ -64,12 +64,17 @@
         <TextView android:id="@+id/twitterId_label"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="Twitter ID"
+                  android:text="Twitter ID:"
                   android:padding="8dp"/>
         <TextView android:id="@+id/twitterId_value"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:padding="8dp"/>
     </LinearLayout>
+    <Button android:id="@+id/back_button"
+            style="@style/ToolbarButton"
+            android:text="Right"
+            android:layout_weight="0">
+    </Button>
 
 </LinearLayout>

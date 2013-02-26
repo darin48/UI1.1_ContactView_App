@@ -64,11 +64,26 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 
         Intent intent = new Intent(this, ContactDetailsActivity.class);
         intent.putExtra("contact", storage.getContact(position));
-        startActivity(intent);
+        intent.putExtra("contactIndex", position);
+        startActivityForResult(intent, 5);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
+        Contact contact;
+        int position;
+        switch (requestCode) {
+            case 5:
+                if (resultCode == RESULT_OK) {
+                    contact = (Contact)data.getSerializableExtra("contact");
+                    position = data.getIntExtra("contactIndex", -1);
+                }
+        }
     }
 
     /* We need to provide a custom adapter in order to use a custom list item view.
-     */
+         */
 	public class ContactAdapter extends ArrayAdapter<Contact> {
 	
 		public ContactAdapter(Context context, int textViewResourceId, List<Contact> objects) {
