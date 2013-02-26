@@ -12,7 +12,9 @@ import java.util.ArrayList;
  */
 public interface ContactStorage {
 
-	public ArrayList<Contact> loadContacts();
+	public boolean loadContacts();
 	public void storeContacts(ArrayList<Contact> contacts);
+    public Contact getContact(int contactIndex);
+    public ArrayList<Contact> getContacts();
 	
 }

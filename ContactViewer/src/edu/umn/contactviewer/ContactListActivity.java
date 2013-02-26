@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,9 @@ import android.widget.AdapterView.*;
 /** Displays a list of contacts.
  *
  */
-public class ContactListActivity extends ListActivity {
+public class ContactListActivity extends ListActivity implements OnItemClickListener {
+    private ContactStorage storage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,32 +35,40 @@ public class ContactListActivity extends ListActivity {
 			}
 		});
 		
-		ContactStorage storage = newContactStorage();
-		ArrayList<Contact> contacts = storage.loadContacts();
+		storage = new LocalContactStorage(ContactListActivity.this);
+        storage.loadContacts();
+		//ArrayList<Contact> contacts = storage.loadContacts();
         
         // initialize the list view
-        setListAdapter(new ContactAdapter(this, R.layout.list_item, contacts));
+        setListAdapter(new ContactAdapter(this, R.layout.list_item, storage.getContacts()));
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
-        
+
+
         // handle the item click events
-        lv.setOnItemClickListener(new OnItemClickListener() {
-        	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				// When clicked, show a toast with the TextView text
-				Toast.makeText(getApplicationContext(), 
-					"Clicked: " + ((ContactAdapter)getListAdapter()).getItem(position).getName(),
-					Toast.LENGTH_SHORT).show();
-				}
-			}
-        );
-        
+        lv.setOnItemClickListener(this);
+
     }
-    
-    
 
+ /*   @Override
+    protected void onListItemClick(ListView l,  View v,  int position, long id) {
+        super.onListItemClick(l, v, position, id);
 
-	/* We need to provide a custom adapter in order to use a custom list item view.
-	 */
+        Intent intent = new Intent(this, ContactDetailsActivity.class);
+        intent.putExtra("contact", storage.getContact(position));
+    }*/
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //To change body of implemented methods use File | Settings | File Templates.
+
+        Intent intent = new Intent(this, ContactDetailsActivity.class);
+        intent.putExtra("contact", storage.getContact(position));
+        startActivity(intent);
+    }
+
+    /* We need to provide a custom adapter in order to use a custom list item view.
+     */
 	public class ContactAdapter extends ArrayAdapter<Contact> {
 	
 		public ContactAdapter(Context context, int textViewResourceId, List<Contact> objects) {
@@ -78,15 +89,15 @@ public class ContactListActivity extends ListActivity {
 		}
 	}
 	
-	private ContactStorage newContactStorage()
+/*	private ContactStorage newContactStorage()
 	{
 		return new ContactStorage() {
 
 			@Override
-			public ArrayList<Contact> loadContacts() {
+			public void loadContacts() {
 		        
 		        // make some contacts
-		        ArrayList<Contact> contacts = new ArrayList<Contact>();
+                ArrayList<Contact> contacts = new ArrayList<Contact>();
 		        contacts.add(new Contact("Malcom Reynolds 2")
 		    		.setEmail("mal@serenity.com")
 		    		.setTitle("Captain")
@@ -129,12 +140,13 @@ public class ContactListActivity extends ListActivity {
 					.setTwitterId("shepherdbook"));
 
 		        /**
-		         * We could initialize the permanent contacts list this way:
+		         * We could initialize the permanent contacts list this way: *//*
 				LocalContactStorage storage = new LocalContactStorage(ContactListActivity.this);
-				storage.storeContacts(contacts);
-		         */
+                //storage.storeContacts(contacts);
+				storage.loadContacts();
+
 		        
-		        return contacts;
+		        //return contacts;
 			}
 
 			@Override
@@ -142,7 +154,7 @@ public class ContactListActivity extends ListActivity {
 			}
 			
 		};
-	}
+	}            */
     
 }
 

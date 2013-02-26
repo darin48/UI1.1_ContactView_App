@@ -16,28 +16,30 @@ public class LocalContactStorage implements ContactStorage {
 	
 	private static final String FILENAME = "Contacts.txt";
 	private Context context;
+    private static ArrayList<Contact> contacts;
 	
 	public LocalContactStorage(Context context) {
 		this.context = context;
 	}
 
 	@Override
-	public ArrayList<Contact> loadContacts() {
+	public boolean loadContacts() {
 		ArrayList<Contact> result = new ArrayList<Contact>();
 		
 		try {
 			FileInputStream fis = context.openFileInput(FILENAME);
+            contacts = new ArrayList<Contact>();
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			String gsonContacts = (String)ois.readObject();
 			Gson gson = new Gson();
-			Contact[] contacts = gson.fromJson(gsonContacts, Contact[].class);
-			for (int i = 0; i < contacts.length; ++i)
-				result.add(contacts[i]);
+			Contact[] readContacts = gson.fromJson(gsonContacts, Contact[].class);
+			for (int i = 0; i < readContacts.length; ++i)
+				contacts.add(readContacts[i]);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return result;
+		return true;
 	}
 
 	@Override
@@ -59,5 +61,22 @@ public class LocalContactStorage implements ContactStorage {
 		}
 
 	}
-
+    @Override
+    public Contact getContact(int contactIndex) {
+        if (contacts == null) {
+            loadContacts();
+        }
+        if (contacts.isEmpty()) {
+            return null;
+        } else {
+            return contacts.get(contactIndex);
+        }
+    }
+    @Override
+    public ArrayList<Contact> getContacts() {
+        if (contacts == null) {
+            loadContacts();
+        }
+        return contacts;
+    }
 }
