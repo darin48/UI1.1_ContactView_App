@@ -16,11 +16,14 @@
                   android:textStyle="bold"
                   android:padding="8dp"
                   android:paddingRight="0dp"/>
-        <TextView android:id="@+id/name_value"
-                  android:layout_width="wrap_content"
+        <EditText android:id="@+id/name_value"
+                  android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"/>
+                  android:inputType="textPersonName"
+                  android:text=""
+                  android:layout_weight="1"
+                  android:hint="<enter in contact name>"
+                  android:padding="8dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
@@ -31,12 +34,14 @@
                   android:text="Title:"
                   android:textStyle="bold"
                   android:padding="8dp"/>
-        <TextView android:id="@+id/title_value"
-                  android:layout_width="wrap_content"
+        <EditText android:id="@+id/title_value"
+                  android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"
-                  android:paddingRight="0dp"/>
+                  android:inputType="text"
+                  android:text=""
+                  android:layout_weight="1"
+                  android:hint="<enter in contact title>"
+                  android:padding="8dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
@@ -48,11 +53,14 @@
                   android:textStyle="bold"
                   android:padding="8dp"
                   android:paddingRight="0dp"/>
-        <TextView android:id="@+id/phone_value"
-                  android:layout_width="wrap_content"
+        <EditText android:id="@+id/phone_value"
+                  android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"/>
+                  android:inputType="phone"
+                  android:text=""
+                  android:layout_weight="1"
+                  android:hint="<enter in phone number>"
+                  android:padding="8dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
@@ -64,11 +72,14 @@
                   android:textStyle="bold"
                   android:padding="8dp"
                   android:paddingRight="0dp"/>
-        <TextView android:id="@+id/email_value"
-                  android:layout_width="60dp"
+        <EditText android:id="@+id/email_value"
+                  android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"/>
+                  android:inputType="textEmailAddress"
+                  android:text=""
+                  android:layout_weight="1"
+                  android:hint="<enter in email address>"
+                  android:padding="8dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
@@ -80,17 +91,19 @@
                   android:textStyle="bold"
                   android:padding="8dp"
                   android:paddingRight="0dp"/>
-        <TextView android:id="@+id/twitterId_value"
-                  android:layout_width="wrap_content"
+        <EditText android:id="@+id/twitterId_value"
+                  android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"/>
+                  android:inputType="text"
+                  android:text=""
+                  android:layout_weight="1"
+                  android:hint="<enter in twitter address>"
+                  android:padding="8dp" />
     </LinearLayout>
     <Button android:id="@+id/bottom_button"
             style="@style/ToolbarButton"
-            android:text="Bottom"
-            android:layout_weight="0"
-            android:layout_gravity="bottom">
+            android:text="Clear Text"
+            android:layout_weight="0">
     </Button>
 
 </LinearLayout>

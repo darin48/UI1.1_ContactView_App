@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,13 +20,15 @@ import android.widget.Toast;
  */
 public class ContactDetailsActivity extends Activity {
     private Contact contact;
-    private ContactStorage contacts = new LocalContactStorage(ContactDetailsActivity.this);
+    //private ContactStorage contacts = new LocalContactStorage(ContactDetailsActivity.this);
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
 
         contact = (Contact)getIntent().getSerializableExtra("contact");
+
         TextView nameView = (TextView)findViewById(R.id.name_value);
         TextView titleView = (TextView)findViewById(R.id.title_value);
         TextView phoneView = (TextView)findViewById(R.id.phone_value);
@@ -36,15 +39,25 @@ public class ContactDetailsActivity extends Activity {
         phoneView.setText(contact.getPhone());
         emailView.setText(contact.getEmail());
         twitterIdView.setText(contact.getTwitterId());
+
         ToolbarConfig toolbar = new ToolbarConfig(this, contact.getName());
+
         Button rightButton = toolbar.getToolbarRightButton();
         rightButton.setText("Edit");
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(ContactDetailsActivity.this, "This would edit contact " + contact.getName(), Toast.LENGTH_LONG).show();
-            }
-        });
+
+        //***********************************************
+        //*** GOT STUMPED HERE, SO I COMMENTED IT OUT ***
+        //rightButton.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View view) {
+        //        //Toast.makeText(ContactDetailsActivity.this, "This would edit contact " + contact.getName(), Toast.LENGTH_LONG).show();
+        //        Intent intent = new Intent(this, ContactEditActivity.class);
+        //        //intent.putExtra("contact", storage.getContact(position));
+        //        //intent.putExtra("contactIndex", position);
+        //        //startActivityForResult(intent, 5);
+        //    }
+        //});
+
         Button backButton = toolbar.getToolbarLeftButton();
         backButton.setText("Back");
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +80,30 @@ public class ContactDetailsActivity extends Activity {
                 finish();
             }
         });
+    }
+
+//    @Override
+//    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//        //To change body of implemented methods use File | Settings | File Templates.
+//
+//        Intent intent = new Intent(this, ContactEditActivity.class);
+//        intent.putExtra("contact", parent.contact); //*** WE NEED TO ADD HERE  ***
+//        intent.putExtra("contactIndex", position);
+//        startActivityForResult(intent, 5);
+//    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
+        Contact contact;
+        int position;
+        switch (requestCode) {
+            case 5:
+                if (resultCode == RESULT_OK) {
+                    contact = (Contact)data.getSerializableExtra("contact");
+                    position = data.getIntExtra("contactIndex", -1);
+                }
+        }
     }
 
  //   @Override
