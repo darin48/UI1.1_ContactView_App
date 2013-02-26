@@ -2,7 +2,7 @@ package edu.umn.contactviewer;
 
 import java.io.Serializable;
 
-/** Model class for storing a single contact.
+/** This is my comment. Model class for storing a single contact.
  *
  */
 public class Contact implements Serializable {
