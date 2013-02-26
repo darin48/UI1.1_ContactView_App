@@ -37,17 +37,27 @@ public class ContactDetailsActivity extends Activity {
         emailView.setText(contact.getEmail());
         twitterIdView.setText(contact.getTwitterId());
         ToolbarConfig toolbar = new ToolbarConfig(this, contact.getName());
-        Button button = toolbar.getToolbarRightButton();
-        button.setText("Edit");
-        button.setOnClickListener(new View.OnClickListener() {
+        Button rightButton = toolbar.getToolbarRightButton();
+        rightButton.setText("Edit");
+        rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(ContactDetailsActivity.this, "This would edit contact " + contact.getName(), Toast.LENGTH_LONG).show();
             }
         });
-        Button backButton = (Button)findViewById(R.id.back_button);
-        backButton.setText("Edit");
+        Button backButton = toolbar.getToolbarLeftButton();
+        backButton.setText("Back");
         backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        Button deleteButton = (Button)findViewById(R.id.bottom_button);
+        deleteButton.setText("Delete");
+        //deleteButton.setVisibility(deleteButton.GONE);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent returnIntent = new Intent();

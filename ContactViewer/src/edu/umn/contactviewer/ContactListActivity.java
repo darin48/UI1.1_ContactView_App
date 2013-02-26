@@ -34,6 +34,15 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 				Toast.makeText(ContactListActivity.this, "This is a sample application made for SENG 5199-1 in the MSSE program.", Toast.LENGTH_LONG).show();
 			}
 		});
+        Button leftButton = toolbar.getToolbarLeftButton();
+        // Could change this to Add when we have the edit screen done
+        leftButton.setText("Quit");
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 		
 		storage = new LocalContactStorage(ContactListActivity.this);
         storage.loadContacts();

@@ -16,7 +16,7 @@ public class LocalContactStorage implements ContactStorage {
 	
 	private static final String FILENAME = "Contacts.txt";
 	private Context context;
-    private static ArrayList<Contact> contacts;
+    private ArrayList<Contact> contacts;
 	
 	public LocalContactStorage(Context context) {
 		this.context = context;

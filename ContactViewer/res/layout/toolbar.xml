@@ -5,6 +5,11 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     style="@style/Toolbar">
+    <Button android:id="@+id/toolbar_left_button"
+            style="@style/ToolbarButton"
+            android:text="Left"
+            android:layout_weight="0">
+    </Button>
 	<TextView android:id="@+id/toolbar_title"
 	    style="@style/ToolbarTitle"
 	    android:text="Title"
