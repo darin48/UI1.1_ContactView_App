@@ -1,7 +1,9 @@
 package edu.umn.contactviewer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -93,11 +95,28 @@ public class ContactDetailsActivity extends Activity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("contact", contact);
-                returnIntent.putExtra("contactIndex", getIntent().getIntExtra("contactIndex", -1));
-                ContactDetailsActivity.this.setResult(RESULT_OK, returnIntent);
-                finish();
+                boolean deleteContact = false;
+                AlertDialog.Builder builder = new AlertDialog.Builder(ContactDetailsActivity.this);
+                builder.setMessage("Are you sure you want to delete " + contact.getName() + "?")
+                       .setTitle("Delete " + contact.getName() + "?");
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent returnIntent = new Intent();
+                        returnIntent.putExtra("delete", true);
+                        returnIntent.putExtra("contactIndex", position);
+                        ContactDetailsActivity.this.setResult(RESULT_OK, returnIntent);
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog deleteAlert = builder.create();
+                deleteAlert.show();
             }
         });
     }
