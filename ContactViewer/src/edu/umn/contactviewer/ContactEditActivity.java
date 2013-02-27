@@ -28,11 +28,11 @@ public class ContactEditActivity extends Activity {
 
         contact = (Contact)getIntent().getSerializableExtra("contact");
 
-        EditText nameView = (EditText)findViewById(R.id.name_value);
-        EditText titleView = (EditText)findViewById(R.id.title_value);
-        EditText phoneView = (EditText)findViewById(R.id.phone_value);
-        EditText emailView = (EditText)findViewById(R.id.email_value);
-        EditText twitterIdView = (EditText)findViewById(R.id.twitterId_value);
+        final EditText nameView = (EditText)findViewById(R.id.name_value);
+        final EditText titleView = (EditText)findViewById(R.id.title_value);
+        final EditText phoneView = (EditText)findViewById(R.id.phone_value);
+        final EditText emailView = (EditText)findViewById(R.id.email_value);
+        final EditText twitterIdView = (EditText)findViewById(R.id.twitterId_value);
         nameView.setText(contact.getName());
         titleView.setText(contact.getTitle());
         phoneView.setText(contact.getPhone());
@@ -46,7 +46,15 @@ public class ContactEditActivity extends Activity {
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //*** WE NEED TO CHANGE THIS TO SEND OUR RESULTS BACK  ***
+                Intent returnIntent = new Intent();
+                contact.setName(nameView.getText().toString());
+                contact.setEmail(emailView.getText().toString());
+                contact.setPhone(phoneView.getText().toString());
+                contact.setTitle(titleView.getText().toString());
+                contact.setTwitterId(twitterIdView.getText().toString());
+                returnIntent.putExtra("contact", contact);
+                returnIntent.putExtra("position", getIntent().getIntExtra("position", -1));
+                ContactEditActivity.this.setResult(RESULT_OK, returnIntent);
                 finish();
             }
         });

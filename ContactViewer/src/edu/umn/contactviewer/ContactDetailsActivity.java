@@ -20,6 +20,12 @@ import android.widget.Toast;
  */
 public class ContactDetailsActivity extends Activity {
     private Contact contact;
+    private int position;
+    TextView nameView;
+    TextView titleView;
+    TextView phoneView;
+    TextView emailView;
+    TextView twitterIdView;
     //private ContactStorage contacts = new LocalContactStorage(ContactDetailsActivity.this);
 
     @Override
@@ -28,12 +34,13 @@ public class ContactDetailsActivity extends Activity {
         setContentView(R.layout.detail);
 
         contact = (Contact)getIntent().getSerializableExtra("contact");
+        position = getIntent().getIntExtra("position", -1);
 
-        TextView nameView = (TextView)findViewById(R.id.name_value);
-        TextView titleView = (TextView)findViewById(R.id.title_value);
-        TextView phoneView = (TextView)findViewById(R.id.phone_value);
-        TextView emailView = (TextView)findViewById(R.id.email_value);
-        TextView twitterIdView = (TextView)findViewById(R.id.twitterId_value);
+        nameView = (TextView)findViewById(R.id.name_value);
+        titleView = (TextView)findViewById(R.id.title_value);
+        phoneView = (TextView)findViewById(R.id.phone_value);
+        emailView = (TextView)findViewById(R.id.email_value);
+        twitterIdView = (TextView)findViewById(R.id.twitterId_value);
         nameView.setText(contact.getName());
         titleView.setText(contact.getTitle());
         phoneView.setText(contact.getPhone());
@@ -44,6 +51,19 @@ public class ContactDetailsActivity extends Activity {
 
         Button rightButton = toolbar.getToolbarRightButton();
         rightButton.setText("Edit");
+        
+        rightButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(ContactDetailsActivity.this, "Edit Button clicked!", Toast.LENGTH_LONG).show();
+				Intent intent = new Intent(ContactDetailsActivity.this, ContactEditActivity.class);
+				intent.putExtra("contact", contact);
+				intent.putExtra("position", position);
+				ContactDetailsActivity.this.startActivityForResult(intent, 77);
+			}
+        	
+        });
 
         //***********************************************
         //*** GOT STUMPED HERE, SO I COMMENTED IT OUT ***
@@ -98,11 +118,16 @@ public class ContactDetailsActivity extends Activity {
         Contact contact;
         int position;
         switch (requestCode) {
-            case 5:
+            case 77:
                 if (resultCode == RESULT_OK) {
                     contact = (Contact)data.getSerializableExtra("contact");
                     position = data.getIntExtra("contactIndex", -1);
-                }
+                    nameView.setText(contact.getName());
+                    titleView.setText(contact.getTitle());
+                    phoneView.setText(contact.getPhone());
+                    emailView.setText(contact.getEmail());
+                    twitterIdView.setText(contact.getTwitterId());
+               }
         }
     }
 
