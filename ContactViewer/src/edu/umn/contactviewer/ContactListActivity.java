@@ -43,10 +43,59 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
                 finish();
             }
         });
-		
+        
+        
+        // make some contacts
+//        ArrayList<Contact> contacts = new ArrayList<Contact>();
+//        contacts.add(new Contact("Malcom Reynolds 2")
+//    		.setEmail("mal@serenity.com")
+//    		.setTitle("Captain")
+//    		.setPhone("612-555-1234")
+//    		.setTwitterId("malcomreynolds"));
+//        contacts.add(new Contact("Zoe Washburne")
+//			.setEmail("zoe@serenity.com")
+//			.setTitle("First Mate")
+//			.setPhone("612-555-5678")
+//			.setTwitterId("zoewashburne"));
+//        contacts.add(new Contact("Hoban Washburne")
+//			.setEmail("wash@serenity.com")
+//			.setTitle("Pilot")
+//			.setPhone("612-555-9012")
+//			.setTwitterId("wash"));
+//        contacts.add(new Contact("Jayne Cobb")
+//			.setEmail("jayne@serenity.com")
+//			.setTitle("Muscle")
+//			.setPhone("612-555-3456")
+//			.setTwitterId("heroofcanton"));
+//        contacts.add(new Contact("Kaylee Frye")
+//			.setEmail("kaylee@serenity.com")
+//			.setTitle("Engineer")
+//			.setPhone("612-555-7890")
+//			.setTwitterId("kaylee"));
+//        contacts.add(new Contact("Simon Tam")
+//			.setEmail("simon@serenity.com")
+//			.setTitle("Doctor")
+//			.setPhone("612-555-4321")
+//			.setTwitterId("simontam"));
+//        contacts.add(new Contact("River Tam")
+//			.setEmail("river@serenity.com")
+//			.setTitle("Doctor's Sister")
+//			.setPhone("612-555-8765")
+//			.setTwitterId("miranda"));
+//        contacts.add(new Contact("Shepherd Book")
+//			.setEmail("shepherd@serenity.com")
+//			.setTitle("Shepherd")
+//			.setPhone("612-555-2109")
+//			.setTwitterId("shepherdbook"));
+
+       
 		storage = new LocalContactStorage(ContactListActivity.this);
-        storage.loadContacts();
-		//ArrayList<Contact> contacts = storage.loadContacts();
+       // storage.storeContacts(contacts);
+		storage.loadContacts();
+		
+		//storage = new LocalContactStorage(ContactListActivity.this);
+        //storage.loadContacts();
+		
         
         // initialize the list view
         setListAdapter(new ContactAdapter(this, R.layout.list_item, storage.getContacts()));
@@ -105,10 +154,11 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 			View item = inflater.inflate(R.layout.list_item, parent, false);
 			
 			Contact contact = getItem(position);
-			((TextView)item.findViewById(R.id.item_name)).setText(contact.getName());
-			((TextView)item.findViewById(R.id.item_title)).setText(contact.getTitle());
-			((TextView)item.findViewById(R.id.item_phone)).setText(contact.getPhone());
-			
+			if (contact != null ) {
+				((TextView)item.findViewById(R.id.item_name)).setText(contact.getName());
+				((TextView)item.findViewById(R.id.item_title)).setText(contact.getTitle());
+				((TextView)item.findViewById(R.id.item_phone)).setText(contact.getPhone());
+			}
 			return item;
 		}
 	}
