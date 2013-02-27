@@ -1,7 +1,9 @@
 package edu.umn.contactviewer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,8 +21,9 @@ import android.widget.Toast;
  * To change this template use File | Settings | File Templates.
  */
 public class ContactDetailsActivity extends Activity {
+    private ContactRepository storage;
+    private int contactID;
     private Contact contact;
-    private int position;
     TextView nameView;
     TextView titleView;
     TextView phoneView;
@@ -33,8 +36,9 @@ public class ContactDetailsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
 
-        contact = (Contact)getIntent().getSerializableExtra("contact");
-        position = getIntent().getIntExtra("position", -1);
+        storage = (ContactRepository)getIntent().getSerializableExtra(ContactListActivity.REPOSITORY);
+        contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
+        contact = storage.lookupContact(contactID);
 
         nameView = (TextView)findViewById(R.id.name_value);
         titleView = (TextView)findViewById(R.id.title_value);
@@ -51,18 +55,16 @@ public class ContactDetailsActivity extends Activity {
 
         Button rightButton = toolbar.getToolbarRightButton();
         rightButton.setText("Edit");
-        
+
         rightButton.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				Toast.makeText(ContactDetailsActivity.this, "Edit Button clicked!", Toast.LENGTH_LONG).show();
-				Intent intent = new Intent(ContactDetailsActivity.this, ContactEditActivity.class);
-				intent.putExtra("contact", contact);
-				intent.putExtra("position", position);
-				ContactDetailsActivity.this.startActivityForResult(intent, 77);
-			}
-        	
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ContactDetailsActivity.this, "Edit Button clicked!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(ContactDetailsActivity.this, ContactEditActivity.class);
+                ContactDetailsActivity.this.startActivityForResult(intent, 77);
+            }
+
         });
 
         //***********************************************
@@ -93,11 +95,25 @@ public class ContactDetailsActivity extends Activity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("contact", contact);
-                returnIntent.putExtra("contactIndex", getIntent().getIntExtra("contactIndex", -1));
-                ContactDetailsActivity.this.setResult(RESULT_OK, returnIntent);
-                finish();
+                boolean deleteContact = false;
+                AlertDialog.Builder builder = new AlertDialog.Builder(ContactDetailsActivity.this);
+                builder.setMessage("Are you sure you want to delete " + contact.getName() + "?")
+                        .setTitle("Delete " + contact.getName() + "?");
+                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ContactDetailsActivity.this.setResult(RESULT_OK);
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog deleteAlert = builder.create();
+                deleteAlert.show();
             }
         });
     }
@@ -127,13 +143,13 @@ public class ContactDetailsActivity extends Activity {
                     phoneView.setText(contact.getPhone());
                     emailView.setText(contact.getEmail());
                     twitterIdView.setText(contact.getTwitterId());
-               }
+                }
         }
     }
 
- //   @Override
- //   public boolean onCreateOptionsMenu(Menu menu) {
- //       getMenuInflater().inflate(android.R.menu.detail, menu);
- //       return true;
- //   }
+    //   @Override
+    //   public boolean onCreateOptionsMenu(Menu menu) {
+    //       getMenuInflater().inflate(android.R.menu.detail, menu);
+    //       return true;
+    //   }
 }

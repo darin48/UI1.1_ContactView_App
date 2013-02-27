@@ -17,23 +17,29 @@ import android.widget.AdapterView.*;
  *
  */
 public class ContactListActivity extends ListActivity implements OnItemClickListener {
-    private ContactStorage storage;
+    private ContactRepository storage;
+    private ArrayList<Contact> contacts;
+    private static final int DETAILS_REQUEST = 13;
+    public static final String CONTACT_ID = "contactID";
+    public static final String REPOSITORY = "repository";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        storage = new FileContactRepository("Contacts.txt");
+        contacts = new ArrayList<Contact>();
         setContentView(R.layout.list);
         ToolbarConfig toolbar = new ToolbarConfig(this, "Contacts");
 
-	    // setup the about button
-	    Button button = toolbar.getToolbarRightButton();
-	    button.setText("About");
-		button.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				Toast.makeText(ContactListActivity.this, "This is a sample application made for SENG 5199-1 in the MSSE program.", Toast.LENGTH_LONG).show();
-			}
-		});
+        // setup the about button
+        Button button = toolbar.getToolbarRightButton();
+        button.setText("About");
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(ContactListActivity.this, "This is a sample application made for SENG 5199-1 in the MSSE program.", Toast.LENGTH_LONG).show();
+            }
+        });
         Button leftButton = toolbar.getToolbarLeftButton();
         // Could change this to Add when we have the edit screen done
         leftButton.setText(R.string.addNew);
@@ -48,12 +54,16 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 			}
         });
         
-		storage = new LocalContactStorage(ContactListActivity.this);
-        storage.loadContacts();
-		
-        
+
+        storage.connect(this);
+        contacts = getContacts();
+   
+        //storage = new LocalContactStorage(ContactListActivity.this);
+        //storage.loadContacts();
+
+
         // initialize the list view
-        setListAdapter(new ContactAdapter(this, R.layout.list_item, storage.getContacts()));
+        setListAdapter(new ContactAdapter(this, R.layout.list_item, contacts));
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
 
@@ -61,6 +71,16 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         // handle the item click events
         lv.setOnItemClickListener(this);
 
+    }
+
+    private ArrayList<Contact> getContacts()
+    {
+        ArrayList<Contact> result = new ArrayList<Contact>();
+        int[] ids = storage.getAllContacts();
+        Contact[] contacts = storage.getContacts(ids);
+        for (int i = 0; i < contacts.length; ++i)
+            result.add(contacts[i]);
+        return result;
     }
 
  /*   @Override
@@ -76,9 +96,9 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         //To change body of implemented methods use File | Settings | File Templates.
 
         Intent intent = new Intent(this, ContactDetailsActivity.class);
-        intent.putExtra("contact", storage.getContact(position));
-        intent.putExtra("contactIndex", position);
-        startActivityForResult(intent, 5);
+        intent.putExtra(CONTACT_ID, contacts.get(position).getID());
+        intent.putExtra(REPOSITORY, storage);
+        startActivityForResult(intent, DETAILS_REQUEST);
     }
 
     @Override
@@ -87,36 +107,36 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         Contact contact;
         int position;
         switch (requestCode) {
-            case 5:
+            case DETAILS_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    contact = (Contact)data.getSerializableExtra("contact");
-                    position = data.getIntExtra("contactIndex", -1);
+                    int id = data.getIntExtra(CONTACT_ID, -1);
+                    // TODO: refresh list from repository
                 }
         }
     }
 
     /* We need to provide a custom adapter in order to use a custom list item view.
          */
-	public class ContactAdapter extends ArrayAdapter<Contact> {
-	
-		public ContactAdapter(Context context, int textViewResourceId, List<Contact> objects) {
-			super(context, textViewResourceId, objects);
-		}
-	
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = getLayoutInflater();
-			View item = inflater.inflate(R.layout.list_item, parent, false);
-			
-			Contact contact = getItem(position);
-			if (contact != null ) {
-				((TextView)item.findViewById(R.id.item_name)).setText(contact.getName());
-				((TextView)item.findViewById(R.id.item_title)).setText(contact.getTitle());
-				((TextView)item.findViewById(R.id.item_phone)).setText(contact.getPhone());
-			}
-			return item;
-		}
-	}
+    public class ContactAdapter extends ArrayAdapter<Contact> {
+
+        public ContactAdapter(Context context, int textViewResourceId, List<Contact> objects) {
+            super(context, textViewResourceId, objects);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = getLayoutInflater();
+            View item = inflater.inflate(R.layout.list_item, parent, false);
+
+            Contact contact = getItem(position);
+            if (contact != null ) {
+                ((TextView)item.findViewById(R.id.item_name)).setText(contact.getName());
+                ((TextView)item.findViewById(R.id.item_title)).setText(contact.getTitle());
+                ((TextView)item.findViewById(R.id.item_phone)).setText(contact.getPhone());
+            }
+            return item;
+        }
+    }
 	
 /*	private ContactStorage newContactStorage()
 	{
@@ -184,7 +204,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 			
 		};
 	}            */
-    
+
 }
 
 
