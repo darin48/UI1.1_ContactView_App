@@ -36,65 +36,20 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 		});
         Button leftButton = toolbar.getToolbarLeftButton();
         // Could change this to Add when we have the edit screen done
-        leftButton.setText("Quit");
+        leftButton.setText(R.string.addNew);
         leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
+        	@Override
+			public void onClick(View v) {
+				//Toast.makeText(this, "Edit Button clicked!", Toast.LENGTH_LONG).show();
+				Intent intent = new Intent(ContactListActivity.this, ContactEditActivity.class);
+				intent.putExtra("contact", new Contact(123));
+				intent.putExtra("position", 0);
+				startActivityForResult(intent, 21);
+			}
         });
         
-        
-        // make some contacts
-//        ArrayList<Contact> contacts = new ArrayList<Contact>();
-//        contacts.add(new Contact("Malcom Reynolds 2")
-//    		.setEmail("mal@serenity.com")
-//    		.setTitle("Captain")
-//    		.setPhone("612-555-1234")
-//    		.setTwitterId("malcomreynolds"));
-//        contacts.add(new Contact("Zoe Washburne")
-//			.setEmail("zoe@serenity.com")
-//			.setTitle("First Mate")
-//			.setPhone("612-555-5678")
-//			.setTwitterId("zoewashburne"));
-//        contacts.add(new Contact("Hoban Washburne")
-//			.setEmail("wash@serenity.com")
-//			.setTitle("Pilot")
-//			.setPhone("612-555-9012")
-//			.setTwitterId("wash"));
-//        contacts.add(new Contact("Jayne Cobb")
-//			.setEmail("jayne@serenity.com")
-//			.setTitle("Muscle")
-//			.setPhone("612-555-3456")
-//			.setTwitterId("heroofcanton"));
-//        contacts.add(new Contact("Kaylee Frye")
-//			.setEmail("kaylee@serenity.com")
-//			.setTitle("Engineer")
-//			.setPhone("612-555-7890")
-//			.setTwitterId("kaylee"));
-//        contacts.add(new Contact("Simon Tam")
-//			.setEmail("simon@serenity.com")
-//			.setTitle("Doctor")
-//			.setPhone("612-555-4321")
-//			.setTwitterId("simontam"));
-//        contacts.add(new Contact("River Tam")
-//			.setEmail("river@serenity.com")
-//			.setTitle("Doctor's Sister")
-//			.setPhone("612-555-8765")
-//			.setTwitterId("miranda"));
-//        contacts.add(new Contact("Shepherd Book")
-//			.setEmail("shepherd@serenity.com")
-//			.setTitle("Shepherd")
-//			.setPhone("612-555-2109")
-//			.setTwitterId("shepherdbook"));
-
-       
 		storage = new LocalContactStorage(ContactListActivity.this);
-       // storage.storeContacts(contacts);
-		storage.loadContacts();
-		
-		//storage = new LocalContactStorage(ContactListActivity.this);
-        //storage.loadContacts();
+        storage.loadContacts();
 		
         
         // initialize the list view
