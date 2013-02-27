@@ -37,6 +37,11 @@ public class FileContactRepository implements ContactRepository, Serializable {
             for (int i = 0; i < readContacts.length; ++i) {
                 Contact contact = readContacts[i];
                 int id = contact.getID();
+                if (id == 0) {
+                	Contact c = newContact();
+                	c.copyFrom(contact);
+                	contact = c;
+                }
                 if (maxID < id)
                     maxID = id;
                 contacts.put(new Integer(id), contact);

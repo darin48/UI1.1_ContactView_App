@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public class Contact implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private final int _id;
 	private String _name = "";
 	private String _phone = "";
@@ -91,6 +93,14 @@ public class Contact implements Serializable {
 	public Contact setTwitterId(String twitterId) {
 		_twitterId = twitterId;
 		return this;
+	}
+
+	public void copyFrom(Contact contact) {
+		_name = contact._name;
+		_phone = contact._phone;
+		_title = contact._title;
+		_email = contact._email;
+		_twitterId = contact._twitterId;
 	}
 	
 	public String toString() {
