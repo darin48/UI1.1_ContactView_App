@@ -20,6 +20,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     private ContactRepository storage;
     private ArrayList<Contact> contacts;
     private static final int DETAILS_REQUEST = 13;
+    private static final int ADD_CONTACT = 21;
     public static final String CONTACT_ID = "contactID";
     public static final String REPOSITORY = "repository";
 
@@ -30,10 +31,13 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         contacts = new ArrayList<Contact>();
         setContentView(R.layout.list);
         ToolbarConfig toolbar = new ToolbarConfig(this, "Contacts");
+        
+        storage.connect(this);
+        contacts = getContacts();
 
         // setup the about button
         Button button = toolbar.getToolbarRightButton();
-        button.setText("About");
+        button.setText(R.string.about);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,20 +52,13 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 			public void onClick(View v) {
 				//Toast.makeText(this, "Edit Button clicked!", Toast.LENGTH_LONG).show();
 				Intent intent = new Intent(ContactListActivity.this, ContactEditActivity.class);
-				intent.putExtra("contact", new Contact(123));
-				intent.putExtra("position", 0);
-				startActivityForResult(intent, 21);
+				intent.putExtra(CONTACT_ID, storage.newContact().getID());
+				//intent.putExtra("contact", storage.newContact());
+				intent.putExtra(REPOSITORY, storage);
+				startActivityForResult(intent, ADD_CONTACT);
 			}
         });
         
-
-        storage.connect(this);
-        contacts = getContacts();
-   
-        //storage = new LocalContactStorage(ContactListActivity.this);
-        //storage.loadContacts();
-
-
         // initialize the list view
         setListAdapter(new ContactAdapter(this, R.layout.list_item, contacts));
         ListView lv = getListView();
@@ -104,14 +101,22 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);    //To change body of overridden methods use File | Settings | File Templates.
-        Contact contact;
-        int position;
+        //Contact contact;
+        //int position;
         switch (requestCode) {
             case DETAILS_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    int id = data.getIntExtra(CONTACT_ID, -1);
+                	 contacts = getContacts();
+                	//int id = data.getIntExtra(CONTACT_ID, -1);
                     // TODO: refresh list from repository
                 }
+                break;
+            case ADD_CONTACT:
+                if (resultCode == RESULT_OK) {
+                	 contacts = getContacts();
+                	//int id = data.getIntExtra(CONTACT_ID, -1);
+                    // TODO: refresh list from repository
+                }    
         }
     }
 

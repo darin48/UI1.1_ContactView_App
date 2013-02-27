@@ -20,13 +20,16 @@ import android.widget.Toast;
  */
 public class ContactEditActivity extends Activity {
     private Contact contact;
+    private ContactRepository storage;
+    private int contactID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit);
-
-        contact = (Contact)getIntent().getSerializableExtra("contact");
+        storage = (ContactRepository)getIntent().getSerializableExtra(ContactListActivity.REPOSITORY);
+        contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
+        contact = storage.lookupContact(contactID);
 
         final EditText nameView = (EditText)findViewById(R.id.name_value);
         final EditText titleView = (EditText)findViewById(R.id.title_value);
@@ -46,15 +49,16 @@ public class ContactEditActivity extends Activity {
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent returnIntent = new Intent();
+                //Intent returnIntent = new Intent();
                 contact.setName(nameView.getText().toString());
                 contact.setEmail(emailView.getText().toString());
                 contact.setPhone(phoneView.getText().toString());
                 contact.setTitle(titleView.getText().toString());
                 contact.setTwitterId(twitterIdView.getText().toString());
-                returnIntent.putExtra("contact", contact);
-                returnIntent.putExtra("position", getIntent().getIntExtra("position", -1));
-                ContactEditActivity.this.setResult(RESULT_OK, returnIntent);
+                storage.flush(ContactEditActivity.this);
+                //returnIntent.putExtra("contact", contact);
+                //returnIntent.putExtra("position", getIntent().getIntExtra("position", -1));
+                ContactEditActivity.this.setResult(RESULT_OK);
                 finish();
             }
         });

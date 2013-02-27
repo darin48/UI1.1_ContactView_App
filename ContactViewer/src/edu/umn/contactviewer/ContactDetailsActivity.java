@@ -62,6 +62,8 @@ public class ContactDetailsActivity extends Activity {
             public void onClick(View v) {
                 Toast.makeText(ContactDetailsActivity.this, "Edit Button clicked!", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(ContactDetailsActivity.this, ContactEditActivity.class);
+                intent.putExtra("contact", contact);
+				intent.putExtra(ContactListActivity.REPOSITORY, storage);
                 ContactDetailsActivity.this.startActivityForResult(intent, 77);
             }
 
