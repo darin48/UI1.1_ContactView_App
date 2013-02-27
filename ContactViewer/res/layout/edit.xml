@@ -22,7 +22,7 @@
                   android:inputType="textPersonName"
                   android:text=""
                   android:layout_weight="1"
-                  android:hint="enter in contact name"
+                  android:hint="&lt;enter in contact name&gt;"
                   android:padding="8dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
@@ -40,7 +40,7 @@
                   android:inputType="text"
                   android:text=""
                   android:layout_weight="1"
-                  android:hint="enter in contact title"
+                  android:hint="&lt;enter in contact title&gt;"
                   android:padding="8dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
@@ -59,7 +59,7 @@
                   android:inputType="phone"
                   android:text=""
                   android:layout_weight="1"
-                  android:hint="enter in phone number"
+                  android:hint="&lt;enter in phone number&gt;"
                   android:padding="8dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
@@ -78,7 +78,7 @@
                   android:inputType="textEmailAddress"
                   android:text=""
                   android:layout_weight="1"
-                  android:hint="enter in email address"
+                  android:hint="&lt;enter in email address&gt;"
                   android:padding="8dp" />
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
@@ -97,7 +97,7 @@
                   android:inputType="text"
                   android:text=""
                   android:layout_weight="1"
-                  android:hint="enter in twitter address"
+                  android:hint="&lt;enter in twitter address&gt;"
                   android:padding="8dp" />
     </LinearLayout>
     <Button android:id="@+id/bottom_button"
