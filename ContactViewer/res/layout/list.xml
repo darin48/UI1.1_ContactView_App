@@ -6,11 +6,16 @@
 
     <include layout="@layout/toolbar"
         android:layout_weight="0"/>
-
-    <ListView android:id="@android:id/list"
+    
+    <EditText android:id="@+id/searchText"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:hint="&lt;enter text to search&gt;"
+                  android:padding="8dp" /> 
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"	>
-        
+        android:layout_height="match_parent" >
     </ListView>
+
 </LinearLayout>

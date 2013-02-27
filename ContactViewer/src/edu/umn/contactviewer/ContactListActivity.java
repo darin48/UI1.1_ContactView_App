@@ -7,6 +7,8 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     private static final int ADD_CONTACT = 21;
     public static final String CONTACT_ID = "contactID";
     public static final String REPOSITORY = "repository";
+    ArrayAdapter<Contact> listAdapter = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,8 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         contacts = new ArrayList<Contact>();
         setContentView(R.layout.list);
         ToolbarConfig toolbar = new ToolbarConfig(this, "Contacts");
+        
+        EditText searchText = (EditText) findViewById(R.id.searchText);
         
         storage.connect(this);
         contacts = getContacts();
@@ -59,12 +64,30 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 			}
         });
         
+        listAdapter = new ContactAdapter(this, R.layout.list_item, contacts);
         // initialize the list view
-        setListAdapter(new ContactAdapter(this, R.layout.list_item, contacts));
+        setListAdapter(listAdapter);
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
 
+        searchText.addTextChangedListener(new TextWatcher() {
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            	listAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                    int after) {
+            }
+            
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+        }); 
         // handle the item click events
         lv.setOnItemClickListener(this);
 
