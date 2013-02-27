@@ -7,15 +7,22 @@ import java.io.Serializable;
  */
 public class Contact implements Serializable {
 	
-	/** Creates a contact and assigns its name.
-	 * 
-	 * @param name the contact's name
-	 */
-	public Contact(String name) {
-		_name = name;
+	private final int _id;
+	private String _name = "";
+	private String _phone = "";
+	private String _title = "";
+	private String _email = "";
+	private String _twitterId = "";
+	
+	protected Contact(int id)
+	{
+		_id = id;
 	}
 	
-	private String _name;
+	public int getID()
+	{
+		return _id;
+	}
 	
 	/** Set the contact's name.
 	 */
@@ -29,8 +36,6 @@ public class Contact implements Serializable {
 	public String getName() {
 		return _name;
 	}
-	
-	private String _phone;
 
 	/**
 	 * @return the contact's phone number
@@ -46,8 +51,6 @@ public class Contact implements Serializable {
 		return this;
 	}
 	
-	private String _title;
-
 	/**
 	 * @return The contact's title
 	 */
@@ -62,8 +65,6 @@ public class Contact implements Serializable {
 		return this;
 	}
 	
-	private String _email;
-
 	/**
 	 * @return the contact's e-mail address
 	 */
@@ -77,8 +78,6 @@ public class Contact implements Serializable {
 		_email = email;
 		return this;
 	}
-	
-	private String _twitterId;
 
 	/**
 	 * @return the contact's Twitter ID
