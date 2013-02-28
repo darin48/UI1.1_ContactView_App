@@ -6,7 +6,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.content.Context;
 
@@ -83,20 +85,10 @@ public class FileContactRepository implements ContactRepository, Serializable {
     }
 
     @Override
-    public int[] getAllContacts() {
-        int[] result = new int[contacts.size()];
-        int n = 0;
-        for (Integer key : contacts.keySet()) {
-            result[n++] = key.intValue();
-        }
-        return result;
-    }
-
-    @Override
-    public Contact[] getContacts(int[] ids) {
-        Contact[] result = new Contact[ids.length];
-        for (int i = 0; i < ids.length; ++i) {
-            result[i] = lookupContact(ids[i]);
+    public LinkedList<Contact> getAllContacts() {
+    	LinkedList<Contact> result = new LinkedList<Contact>();
+        for (Contact contact : contacts.values()) {
+        	result.add(contact);
         }
         return result;
     }
