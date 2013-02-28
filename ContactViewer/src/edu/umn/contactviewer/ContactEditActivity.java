@@ -28,6 +28,7 @@ public class ContactEditActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit);
         storage = (ContactRepository)getIntent().getSerializableExtra(ContactListActivity.REPOSITORY);
+        //storage.connect(this);
         contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
         contact = storage.lookupContact(contactID);
 
@@ -49,13 +50,14 @@ public class ContactEditActivity extends Activity {
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent returnIntent = new Intent();
+                Intent returnIntent = new Intent();
                 contact.setName(nameView.getText().toString());
                 contact.setEmail(emailView.getText().toString());
                 contact.setPhone(phoneView.getText().toString());
                 contact.setTitle(titleView.getText().toString());
                 contact.setTwitterId(twitterIdView.getText().toString());
                 storage.flush(ContactEditActivity.this);
+                returnIntent.putExtra(ContactListActivity.CONTACT_ID, contact.getID());
                 //returnIntent.putExtra("contact", contact);
                 //returnIntent.putExtra("position", getIntent().getIntExtra("position", -1));
                 ContactEditActivity.this.setResult(RESULT_OK);

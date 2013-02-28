@@ -62,7 +62,8 @@ public class ContactDetailsActivity extends Activity {
             public void onClick(View v) {
                 Toast.makeText(ContactDetailsActivity.this, "Edit Button clicked!", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(ContactDetailsActivity.this, ContactEditActivity.class);
-                intent.putExtra("contact", contact);
+                //intent.putExtra("contact", contact);
+                intent.putExtra(ContactListActivity.CONTACT_ID, contact.getID());
 				intent.putExtra(ContactListActivity.REPOSITORY, storage);
                 ContactDetailsActivity.this.startActivityForResult(intent, 77);
             }
@@ -138,8 +139,12 @@ public class ContactDetailsActivity extends Activity {
         switch (requestCode) {
             case 77:
                 if (resultCode == RESULT_OK) {
-                    contact = (Contact)data.getSerializableExtra("contact");
-                    position = data.getIntExtra("contactIndex", -1);
+                    //contact = (Contact)data.getSerializableExtra("contact");
+                    //position = data.getIntExtra("contactIndex", -1);
+                    
+                    contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
+                    contact = storage.lookupContact(contactID);
+
                     nameView.setText(contact.getName());
                     titleView.setText(contact.getTitle());
                     phoneView.setText(contact.getPhone());
