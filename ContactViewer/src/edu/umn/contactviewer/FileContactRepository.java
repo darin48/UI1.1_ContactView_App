@@ -26,6 +26,7 @@ public class FileContactRepository implements ContactRepository, Serializable {
     @Override
     public void connect(Context context) {
         FileInputStream fis = null;
+        HashMap<Integer,Contact> newContacts = new HashMap<Integer,Contact>();
         try {
             fis = context.openFileInput(fileName);
             ObjectInputStream ois = new ObjectInputStream(fis);
@@ -33,22 +34,33 @@ public class FileContactRepository implements ContactRepository, Serializable {
             Gson gson = new Gson();
             Contact[] readContacts = gson.fromJson(gsonContacts,
                     Contact[].class);
-            int maxID = readContacts[0].getID();
+            
+            nextID = getMaxID(readContacts) + 1;
+            
             for (int i = 0; i < readContacts.length; ++i) {
                 Contact contact = readContacts[i];
-                int id = contact.getID();
-                if (id == 0) {
+                 if (contact.getID() <= 0) {
                 	Contact c = newContact();
                 	c.copyFrom(contact);
                 	contact = c;
                 }
-                if (maxID < id)
-                    maxID = id;
-                contacts.put(new Integer(id), contact);
+                newContacts.put(new Integer(contact.getID()), contact);
             }
-            nextID = maxID + 1;
+            contacts = newContacts;
         } catch (Exception e) {
         }
+    }
+    
+    private int getMaxID(Contact[] contacts)
+    {
+    	int maxID = 0;
+        for (int i = 0; i < contacts.length; ++i) {
+            Contact contact = contacts[i];
+            int id = contact.getID();
+             if (maxID < id)
+                maxID = id;
+        }
+        return maxID;
     }
 
     @Override
