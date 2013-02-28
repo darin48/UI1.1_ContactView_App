@@ -58,7 +58,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 				Intent intent = new Intent(ContactListActivity.this, ContactEditActivity.class);
 				intent.putExtra(CONTACT_ID, storage.newContact().getID());
 				//intent.putExtra("contact", storage.newContact());
-				intent.putExtra(REPOSITORY, storage);
+				//intent.putExtra(REPOSITORY, storage);
 				startActivityForResult(intent, ADD_CONTACT);
 			}
         });
@@ -106,7 +106,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 
         Intent intent = new Intent(this, ContactDetailsActivity.class);
         intent.putExtra(CONTACT_ID, contacts.get(position).getID());
-        intent.putExtra(REPOSITORY, storage);
+        //intent.putExtra(REPOSITORY, storage);
         startActivityForResult(intent, DETAILS_REQUEST);
     }
 
@@ -149,7 +149,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         }
     }
 
-    public ContactRepository getStorage() {
+    public static ContactRepository getStorage() {
         return storage;
     }
 	
