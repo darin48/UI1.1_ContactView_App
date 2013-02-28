@@ -27,7 +27,7 @@ public class FileContactRepository implements ContactRepository, Serializable {
     public void connect(Context context) {
         FileInputStream fis = null;
         try {
-            fis = context.openFileInput(fileName);
+        	fis = context.openFileInput(fileName);
             ObjectInputStream ois = new ObjectInputStream(fis);
             String gsonContacts = (String) ois.readObject();
             Gson gson = new Gson();
