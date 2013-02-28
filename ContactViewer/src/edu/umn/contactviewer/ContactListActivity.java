@@ -114,9 +114,8 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //To change body of implemented methods use File | Settings | File Templates.
-
         Intent intent = new Intent(this, ContactDetailsActivity.class);
-        intent.putExtra(CONTACT_ID, contacts.get(position).getID());
+        intent.putExtra(CONTACT_ID, ((Contact)view.getTag()).getID());
         intent.putExtra(REPOSITORY, storage);
         startActivityForResult(intent, DETAILS_REQUEST);
     }
@@ -129,7 +128,9 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         switch (requestCode) {
             case DETAILS_REQUEST:
                 if (resultCode == RESULT_OK) {
-                	 contacts = getContacts();
+                	contacts = getContacts();
+                	listAdapter = new ContactAdapter(this, R.layout.list_item, contacts);
+                	listAdapter.notifyDataSetChanged();
                 	//int id = data.getIntExtra(CONTACT_ID, -1);
                     // TODO: refresh list from repository
                 }
@@ -137,6 +138,8 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
             case ADD_CONTACT:
                 if (resultCode == RESULT_OK) {
                 	 contacts = getContacts();
+                	 listAdapter = new ContactAdapter(this, R.layout.list_item, contacts);
+                 	 listAdapter.notifyDataSetChanged();
                 	//int id = data.getIntExtra(CONTACT_ID, -1);
                     // TODO: refresh list from repository
                 }    
@@ -162,6 +165,8 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
                 ((TextView)item.findViewById(R.id.item_title)).setText(contact.getTitle());
                 ((TextView)item.findViewById(R.id.item_phone)).setText(contact.getPhone());
             }
+            
+            item.setTag(contact);
             return item;
         }
     }

@@ -104,7 +104,7 @@ public class Contact implements Serializable {
 	}
 	
 	public String toString() {
-		return _name + " (" + _title + ")";
+		return _name + " " + _title + " " + _phone + " " + _email + " " + _twitterId;
 	}
 }
 
