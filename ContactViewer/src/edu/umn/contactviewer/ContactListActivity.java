@@ -20,7 +20,7 @@ import android.widget.AdapterView.*;
  */
 public class ContactListActivity extends ListActivity implements OnItemClickListener {
     private static ContactRepository storage = null;
-    private List<Contact> contacts;
+//    private List<Contact> contacts;
     private static final int DETAILS_REQUEST = 13;
     private static final int ADD_CONTACT = 21;
     public static final String CONTACT_ID = "contactID";
@@ -37,7 +37,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         EditText searchText = (EditText) findViewById(R.id.searchText);
         
         storage.connect(this);
-        contacts = storage.getAllContacts();
+//        contacts = storage.getAllContacts();
 
         // setup the about button
         Button button = toolbar.getToolbarRightButton();
@@ -63,7 +63,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 			}
         });
         
-        listAdapter = new ContactAdapter(this, R.layout.list_item, contacts);
+        listAdapter = new ContactAdapter(this, R.layout.list_item, storage.getAllContacts());
         // initialize the list view
         setListAdapter(listAdapter);
         ListView lv = getListView();
@@ -105,7 +105,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         //To change body of implemented methods use File | Settings | File Templates.
 
         Intent intent = new Intent(this, ContactDetailsActivity.class);
-        intent.putExtra(CONTACT_ID, contacts.get(position).getID());
+        intent.putExtra(CONTACT_ID, storage.getAllContacts().get(position).getID());
         //intent.putExtra(REPOSITORY, storage);
         startActivityForResult(intent, DETAILS_REQUEST);
     }
@@ -220,6 +220,12 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 		};
 	}            */
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        listAdapter.notifyDataSetChanged();
+
+    }
 }
 
 
