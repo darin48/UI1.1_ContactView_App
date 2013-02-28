@@ -10,82 +10,72 @@
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content">
-        <TextView android:id="@+id/name_label"
-                  android:layout_width="86dp"
-                  android:layout_height="wrap_content"
-                  android:text="Name:"
-                  android:textStyle="bold"
-                  android:padding="8dp"
-                  android:paddingRight="0dp"/>
-        <TextView android:id="@+id/name_value"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"/>
+        <TextView
+			style="@style/DetailsLabel"
+			android:id="@+id/name_label"
+			android:text="Name:"
+		/>
+        <TextView
+			style="@style/DetailsText"
+			android:id="@+id/name_value"
+			android:text="test"
+		/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content">
-        <TextView android:id="@+id/title_label"
-                  android:layout_width="86dp"
-                  android:layout_height="wrap_content"
-                  android:text="Title:"
-                  android:textStyle="bold"
-                  android:padding="8dp"/>
-        <TextView android:id="@+id/title_value"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"
-                  android:paddingRight="0dp"/>
+        <TextView
+			style="@style/DetailsLabel"
+			android:id="@+id/title_label"
+			android:text="Title:"
+		/>
+        <TextView
+			style="@style/DetailsText"
+			android:id="@+id/title_value"
+			android:text="test"
+		/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content">
-        <TextView android:id="@+id/phone_label"
-                  android:layout_width="86dp"
-                  android:layout_height="wrap_content"
-                  android:text="Phone:"
-                  android:textStyle="bold"
-                  android:padding="8dp"
-                  android:paddingRight="0dp"/>
-        <TextView android:id="@+id/phone_value"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"/>
+        <TextView
+			style="@style/DetailsLabel"
+			android:id="@+id/phone_label"
+		android:text="Phone:"
+			/>
+        <TextView
+			style="@style/DetailsText"
+			android:id="@+id/phone_value"
+			android:text="test"
+		/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content">
-        <TextView android:id="@+id/email_label"
-                  android:layout_width="86dp"
-                  android:layout_height="wrap_content"
-                  android:text="Email:"
-                  android:textStyle="bold"
-                  android:padding="8dp"
-                  android:paddingRight="0dp"/>
-        <TextView android:id="@+id/email_value"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"/>
+        <TextView
+			style="@style/DetailsLabel"
+			android:id="@+id/email_label"
+			android:text="Email:"
+		/>
+        <TextView
+			style="@style/DetailsText"
+			android:id="@+id/email_value"
+			android:text="test"
+		/>
     </LinearLayout>
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content">
-        <TextView android:id="@+id/twitterId_label"
-                  android:layout_width="86dp"
-                  android:layout_height="wrap_content"
-                  android:text="Twitter ID:"
-                  android:textStyle="bold"
-                  android:padding="8dp"
-                  android:paddingRight="0dp"/>
-        <TextView android:id="@+id/twitterId_value"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:text="test"
-                  android:padding="8dp"/>
+        <TextView
+			style="@style/DetailsLabel"
+			android:id="@+id/twitterId_label"
+			android:text="Twitter ID:"
+		/>
+        <TextView
+			style="@style/DetailsText"
+			android:id="@+id/twitterId_value"
+			android:text="test"
+		/>
     </LinearLayout>
     <Button android:id="@+id/bottom_button"
             style="@style/ToolbarButton"

@@ -53,11 +53,16 @@ public class ContactEditActivity extends Activity {
                 contact.setPhone(phoneView.getText().toString());
                 contact.setTitle(titleView.getText().toString());
                 contact.setTwitterId(twitterIdView.getText().toString());
+                int result = RESULT_OK;
+                if (!validContact(contact))
+                {
+                 	result = RESULT_CANCELED;
+                }
                 // storage.flush(ContactEditActivity.this);
                 returnIntent.putExtra(ContactListActivity.CONTACT_ID, contact.getID());
                 //returnIntent.putExtra("contact", contact);
                 //returnIntent.putExtra("position", getIntent().getIntExtra("position", -1));
-                ContactEditActivity.this.setResult(RESULT_OK);
+                ContactEditActivity.this.setResult(result);
                 finish();
             }
         });
@@ -67,6 +72,7 @@ public class ContactEditActivity extends Activity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            	validContact(contact);
                 finish();
             }
         });
@@ -90,6 +96,23 @@ public class ContactEditActivity extends Activity {
                 //finish();
             }
         });
+    }
+    
+    private boolean validContact(Contact contact)
+    {
+    	boolean result = true;
+    	
+        if (contact.getName().length() == 0
+        		&& contact.getEmail().length() == 0
+        		&& contact.getPhone().length() == 0
+        		&& contact.getTitle().length() == 0
+        		&& contact.getTwitterId().length() == 0)
+        {
+        	getStorage().deleteContact(contact.getID());
+        	result = false;
+        }
+        return result;
+    	
     }
     
     private ContactRepository getStorage()
