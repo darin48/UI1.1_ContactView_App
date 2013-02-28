@@ -148,6 +148,10 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
             return item;
         }
     }
+
+    public ContactRepository getStorage() {
+        return storage;
+    }
 	
 /*	private ContactStorage newContactStorage()
 	{
