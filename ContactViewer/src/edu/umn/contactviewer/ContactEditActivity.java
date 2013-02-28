@@ -20,17 +20,14 @@ import android.widget.Toast;
  */
 public class ContactEditActivity extends Activity {
     private Contact contact;
-    private ContactRepository storage;
     private int contactID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit);
-        storage = (ContactRepository)getIntent().getSerializableExtra(ContactListActivity.REPOSITORY);
-        //storage.connect(this);
         contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
-        contact = storage.lookupContact(contactID);
+        contact = getStorage().lookupContact(contactID);
 
         final EditText nameView = (EditText)findViewById(R.id.name_value);
         final EditText titleView = (EditText)findViewById(R.id.title_value);
@@ -56,7 +53,7 @@ public class ContactEditActivity extends Activity {
                 contact.setPhone(phoneView.getText().toString());
                 contact.setTitle(titleView.getText().toString());
                 contact.setTwitterId(twitterIdView.getText().toString());
-                storage.flush(ContactEditActivity.this);
+                // storage.flush(ContactEditActivity.this);
                 returnIntent.putExtra(ContactListActivity.CONTACT_ID, contact.getID());
                 //returnIntent.putExtra("contact", contact);
                 //returnIntent.putExtra("position", getIntent().getIntExtra("position", -1));
@@ -93,5 +90,10 @@ public class ContactEditActivity extends Activity {
                 //finish();
             }
         });
+    }
+    
+    private ContactRepository getStorage()
+    {
+    	return ContactListActivity.getStorage();
     }
 }

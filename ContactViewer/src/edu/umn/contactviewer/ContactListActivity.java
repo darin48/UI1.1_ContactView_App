@@ -105,7 +105,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         //To change body of implemented methods use File | Settings | File Templates.
 
         Intent intent = new Intent(this, ContactDetailsActivity.class);
-        intent.putExtra(CONTACT_ID, storage.getAllContacts().get(position).getID());
+        intent.putExtra(CONTACT_ID, ((Contact)view.getTag()).getID());
         //intent.putExtra(REPOSITORY, storage);
         startActivityForResult(intent, DETAILS_REQUEST);
     }
@@ -145,6 +145,8 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
                 ((TextView)item.findViewById(R.id.item_title)).setText(contact.getTitle());
                 ((TextView)item.findViewById(R.id.item_phone)).setText(contact.getPhone());
             }
+            
+            item.setTag(contact);
             return item;
         }
     }

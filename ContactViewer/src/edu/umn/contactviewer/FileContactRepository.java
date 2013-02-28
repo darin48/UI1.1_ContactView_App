@@ -30,7 +30,7 @@ public class FileContactRepository implements ContactRepository, Serializable {
         FileInputStream fis = null;
         HashMap<Integer,Contact> newContacts = new HashMap<Integer,Contact>();
         try {
-            fis = context.openFileInput(fileName);
+        	fis = context.openFileInput(fileName);
             ObjectInputStream ois = new ObjectInputStream(fis);
             String gsonContacts = (String) ois.readObject();
             Gson gson = new Gson();
