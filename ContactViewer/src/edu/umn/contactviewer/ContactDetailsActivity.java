@@ -21,6 +21,7 @@ import android.widget.Toast;
  * To change this template use File | Settings | File Templates.
  */
 public class ContactDetailsActivity extends Activity {
+    private static final int EDIT_CONTACT = 77;
     private int contactID;
     private Contact contact;
     TextView nameView;
@@ -64,7 +65,7 @@ public class ContactDetailsActivity extends Activity {
                 //intent.putExtra("contact", contact);
                 intent.putExtra(ContactListActivity.CONTACT_ID, contact.getID());
 				//intent.putExtra(ContactListActivity.REPOSITORY, storage);
-                ContactDetailsActivity.this.startActivityForResult(intent, 77);
+                ContactDetailsActivity.this.startActivityForResult(intent, EDIT_CONTACT);
             }
 
         });
@@ -136,13 +137,15 @@ public class ContactDetailsActivity extends Activity {
         Contact contact;
         int position;
         switch (requestCode) {
-            case 77:
+            case EDIT_CONTACT:
                 if (resultCode == RESULT_OK) {
                     //contact = (Contact)data.getSerializableExtra("contact");
                     //position = data.getIntExtra("contactIndex", -1);
                     
                     contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
                     contact = ContactListActivity.getStorage().lookupContact(contactID);
+                    // TODO: Should we have FileContactRepository store the context now that is doesn't have to be serializable?
+                    ContactListActivity.getStorage().flush(this);
 
                     nameView.setText(contact.getName());
                     titleView.setText(contact.getTitle());
