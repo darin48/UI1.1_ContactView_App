@@ -24,7 +24,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     private static final int DETAILS_REQUEST = 13;
     private static final int ADD_CONTACT = 21;
     public static final String CONTACT_ID = "contactID";
-    public static final String REPOSITORY = "repository";
+//    public static final String REPOSITORY = "repository";
     ArrayAdapter<Contact> listAdapter = null;
 
     @Override
@@ -124,6 +124,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
                 if (resultCode == RESULT_OK) {
                 }    
         }
+        getStorage().flush(this);
     }
 
     /* We need to provide a custom adapter in order to use a custom list item view.
@@ -225,9 +226,17 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     @Override
     public void onResume() {
         super.onResume();
-        listAdapter.notifyDataSetChanged();
-
+     //   getStorage().flush(this);
+        listAdapter = new ContactAdapter(this, R.layout.list_item, getStorage().getAllContacts());
+        // initialize the list view
+        setListAdapter(listAdapter);
     }
+
+ /*   @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getStorage().flush(this);
+    } */
 }
 
 
