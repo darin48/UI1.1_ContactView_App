@@ -21,7 +21,6 @@ import android.widget.Toast;
  * To change this template use File | Settings | File Templates.
  */
 public class ContactDetailsActivity extends Activity {
-    private ContactRepository storage;
     private int contactID;
     private Contact contact;
     TextView nameView;
@@ -36,9 +35,9 @@ public class ContactDetailsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail);
 
-        storage = (ContactRepository)getIntent().getSerializableExtra(ContactListActivity.REPOSITORY);
+        //storage = (ContactRepository)getIntent().getSerializableExtra(ContactListActivity.REPOSITORY);
         contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
-        contact = storage.lookupContact(contactID);
+        contact = ContactListActivity.getStorage().lookupContact(contactID);
 
         nameView = (TextView)findViewById(R.id.name_value);
         titleView = (TextView)findViewById(R.id.title_value);
@@ -64,7 +63,7 @@ public class ContactDetailsActivity extends Activity {
                 Intent intent = new Intent(ContactDetailsActivity.this, ContactEditActivity.class);
                 //intent.putExtra("contact", contact);
                 intent.putExtra(ContactListActivity.CONTACT_ID, contact.getID());
-				intent.putExtra(ContactListActivity.REPOSITORY, storage);
+				//intent.putExtra(ContactListActivity.REPOSITORY, storage);
                 ContactDetailsActivity.this.startActivityForResult(intent, 77);
             }
 
@@ -98,13 +97,13 @@ public class ContactDetailsActivity extends Activity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean deleteContact = false;
                 AlertDialog.Builder builder = new AlertDialog.Builder(ContactDetailsActivity.this);
                 builder.setMessage("Are you sure you want to delete " + contact.getName() + "?")
                         .setTitle("Delete " + contact.getName() + "?");
                 builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        ContactListActivity.getStorage().deleteContact(contactID);
                         ContactDetailsActivity.this.setResult(RESULT_OK);
                         finish();
                     }
@@ -143,7 +142,7 @@ public class ContactDetailsActivity extends Activity {
                     //position = data.getIntExtra("contactIndex", -1);
                     
                     contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
-                    contact = storage.lookupContact(contactID);
+                    contact = ContactListActivity.getStorage().lookupContact(contactID);
 
                     nameView.setText(contact.getName());
                     titleView.setText(contact.getTitle());
