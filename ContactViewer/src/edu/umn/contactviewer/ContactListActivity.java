@@ -19,8 +19,8 @@ import android.widget.AdapterView.*;
  *
  */
 public class ContactListActivity extends ListActivity implements OnItemClickListener {
-    private ContactRepository storage;
-    private ArrayList<Contact> contacts;
+    private static ContactRepository storage = null;
+    private List<Contact> contacts;
     private static final int DETAILS_REQUEST = 13;
     private static final int ADD_CONTACT = 21;
     public static final String CONTACT_ID = "contactID";
@@ -31,14 +31,13 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         storage = new FileContactRepository("Contacts.txt");
-        contacts = new ArrayList<Contact>();
-        setContentView(R.layout.list);
+         setContentView(R.layout.list);
         ToolbarConfig toolbar = new ToolbarConfig(this, "Contacts");
         
         EditText searchText = (EditText) findViewById(R.id.searchText);
         
         storage.connect(this);
-        contacts = getContacts();
+        contacts = storage.getAllContacts();
 
         // setup the about button
         Button button = toolbar.getToolbarRightButton();
@@ -59,7 +58,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 				Intent intent = new Intent(ContactListActivity.this, ContactEditActivity.class);
 				intent.putExtra(CONTACT_ID, storage.newContact().getID());
 				//intent.putExtra("contact", storage.newContact());
-				intent.putExtra(REPOSITORY, storage);
+				//intent.putExtra(REPOSITORY, storage);
 				startActivityForResult(intent, ADD_CONTACT);
 			}
         });
@@ -93,16 +92,6 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 
     }
 
-    private ArrayList<Contact> getContacts()
-    {
-        ArrayList<Contact> result = new ArrayList<Contact>();
-        int[] ids = storage.getAllContacts();
-        Contact[] contacts = storage.getContacts(ids);
-        for (int i = 0; i < contacts.length; ++i)
-            result.add(contacts[i]);
-        return result;
-    }
-
  /*   @Override
     protected void onListItemClick(ListView l,  View v,  int position, long id) {
         super.onListItemClick(l, v, position, id);
@@ -116,7 +105,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         //To change body of implemented methods use File | Settings | File Templates.
         Intent intent = new Intent(this, ContactDetailsActivity.class);
         intent.putExtra(CONTACT_ID, ((Contact)view.getTag()).getID());
-        intent.putExtra(REPOSITORY, storage);
+        //intent.putExtra(REPOSITORY, storage);
         startActivityForResult(intent, DETAILS_REQUEST);
     }
 
@@ -128,20 +117,10 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         switch (requestCode) {
             case DETAILS_REQUEST:
                 if (resultCode == RESULT_OK) {
-                	contacts = getContacts();
-                	listAdapter = new ContactAdapter(this, R.layout.list_item, contacts);
-                	listAdapter.notifyDataSetChanged();
-                	//int id = data.getIntExtra(CONTACT_ID, -1);
-                    // TODO: refresh list from repository
                 }
                 break;
             case ADD_CONTACT:
                 if (resultCode == RESULT_OK) {
-                	 contacts = getContacts();
-                	 listAdapter = new ContactAdapter(this, R.layout.list_item, contacts);
-                 	 listAdapter.notifyDataSetChanged();
-                	//int id = data.getIntExtra(CONTACT_ID, -1);
-                    // TODO: refresh list from repository
                 }    
         }
     }
@@ -169,6 +148,10 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
             item.setTag(contact);
             return item;
         }
+    }
+
+    public static ContactRepository getStorage() {
+        return storage;
     }
 	
 /*	private ContactStorage newContactStorage()
