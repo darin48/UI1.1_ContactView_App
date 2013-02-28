@@ -118,10 +118,12 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         switch (requestCode) {
             case DETAILS_REQUEST:
                 if (resultCode == RESULT_OK) {
+                	//contacts = storage.getAllContacts();
                 }
                 break;
             case ADD_CONTACT:
                 if (resultCode == RESULT_OK) {
+                   	//contacts = storage.getAllContacts();
                 }    
         }
     }
