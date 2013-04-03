@@ -2,7 +2,9 @@ package edu.umn.contactviewer;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -25,8 +27,8 @@ public class WebContactRepository implements ContactRepository
 	private static final String URL_BASE = "http://contacts.tinyapollo.com/";
 	private static final String API_KEY = "ui1_1";
 	private GetContactsTask getContactsTask = null;
-	private LinkedList<Contact> contacts = new LinkedList<Contact>();
-	
+	private Map<Integer, Contact> contacts = new HashMap<Integer, Contact>();
+
 	private class GetContactsTask extends AsyncTask<String, Void, LinkedList<Contact> >
 	{
 		private ContactListActivity context;
@@ -43,7 +45,7 @@ public class WebContactRepository implements ContactRepository
 			ServiceResult serviceResult = null;
 			
 			AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android", null);
-			HttpUriRequest request = new HttpGet("http://contacts.tinyapollo.com/contacts?key=ui1_1");
+			HttpUriRequest request = new HttpGet(URL_BASE + "contacts" + "?key=" + API_KEY);
 			try
 			{
 				HttpResponse response = httpClient.execute(request);
@@ -79,7 +81,8 @@ public class WebContactRepository implements ContactRepository
 			for (ServiceResult.Contact svc : serviceResult.contacts)
 			{
 				Contact contact = newContact(svc);
-				result.add(contact);
+				contacts.put(contact.getID(), contact);
+                result.add(contact);
 			}
 			
 			return result;
@@ -92,7 +95,7 @@ public class WebContactRepository implements ContactRepository
 	        // initialize the list view
 	        context.setListAdapter(listAdapter);
 	        
-	        WebContactRepository.this.contacts = contacts;
+	        //WebContactRepository.this.contacts = contacts;
 		}
 		
 	}
@@ -128,8 +131,8 @@ public class WebContactRepository implements ContactRepository
 	@Override
 	public Contact lookupContact(int id)
 	{
-		// TODO Auto-generated method stub
-		return null;
+        Contact result = contacts.get(new Integer(id));
+        return result;
 	}
 
 	@Override
@@ -142,7 +145,11 @@ public class WebContactRepository implements ContactRepository
 	@Override
 	public LinkedList<Contact> getAllContacts()
 	{
-		return contacts;
+        LinkedList<Contact> contactsList = new LinkedList<Contact>();
+        for (Contact contact : contacts.values()) {
+            contactsList.add(contact);
+        }
+        return contactsList;
 	}
 
 	@Override
