@@ -20,13 +20,13 @@ import android.widget.Toast;
  */
 public class ContactEditActivity extends Activity {
     private Contact contact;
-    private int contactID;
+    private String contactID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit);
-        contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
+        contactID = getIntent().getStringExtra(ContactListActivity.CONTACT_ID);
         contact = getStorage().lookupContact(contactID);
 
         final EditText nameView = (EditText)findViewById(R.id.name_value);

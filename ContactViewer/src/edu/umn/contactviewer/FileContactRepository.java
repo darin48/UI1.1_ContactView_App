@@ -19,7 +19,7 @@ public class FileContactRepository implements ContactRepository, Serializable {
 
     private int nextID = 1;
     private String fileName = null;
-    private Map<Integer, Contact> contacts = new HashMap<Integer, Contact>();
+    private Map<String, Contact> contacts = new HashMap<String, Contact>();
 
     public FileContactRepository(String fileName) {
         this.fileName = fileName;
@@ -28,28 +28,36 @@ public class FileContactRepository implements ContactRepository, Serializable {
     @Override
     public void connect(Context context) {
         FileInputStream fis = null;
-        HashMap<Integer,Contact> newContacts = new HashMap<Integer,Contact>();
+        HashMap<String,Contact> newContacts = new HashMap<String,Contact>();
         try {
         	fis = context.openFileInput(fileName);
             ObjectInputStream ois = new ObjectInputStream(fis);
             String gsonContacts = (String) ois.readObject();
             Gson gson = new Gson();
-            Contact[] readContacts = gson.fromJson(gsonContacts,
-                    Contact[].class);
+            FileContact[] readContacts = gson.fromJson(gsonContacts,
+                    FileContact[].class);
             
             nextID = getMaxID(readContacts) + 1;
             
             for (int i = 0; i < readContacts.length; ++i) {
                 Contact contact = readContacts[i];
-                 if (contact.getID() <= 0) {
-                	Contact c = newContact();
-                	c.copyFrom(contact);
-                	contact = c;
+                try {
+                    int contactID = Integer.parseInt(contact.getID());
+                    if (contactID <= 0) {
+                        Contact c = newContact();
+                        c.copyFrom(contact);
+                        contact = c;
+                    }
+                } catch (NumberFormatException e) {
+                    Contact c = newContact();
+                    c.copyFrom(contact);
+                    contact = c;
                 }
-                newContacts.put(new Integer(contact.getID()), contact);
+                newContacts.put(contact.getID(), contact);
             }
             contacts = newContacts;
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
@@ -58,9 +66,11 @@ public class FileContactRepository implements ContactRepository, Serializable {
     	int maxID = 0;
         for (int i = 0; i < contacts.length; ++i) {
             Contact contact = contacts[i];
-            int id = contact.getID();
-             if (maxID < id)
-                maxID = id;
+            if (FileContact.class.isAssignableFrom(contact.getClass())) {
+                int id = Integer.parseInt(contact.getID());
+                if (maxID < id)
+                    maxID = id;
+            }
         }
         return maxID;
     }
@@ -68,20 +78,20 @@ public class FileContactRepository implements ContactRepository, Serializable {
     @Override
     public Contact newContact() {
         int id = nextID++;
-        Contact result = new Contact(id);
-        contacts.put(new Integer(id), result);
+        Contact result = new FileContact(id);
+        contacts.put(result.getID(), result);
         return result;
     }
 
     @Override
-    public Contact lookupContact(int id) {
-        Contact result = contacts.get(new Integer(id));
+    public Contact lookupContact(String id) {
+        Contact result = contacts.get(id);
         return result;
     }
 
     @Override
-    public void deleteContact(int id) {
-        contacts.remove(new Integer(id));
+    public void deleteContact(String id) {
+        contacts.remove(id);
     }
 
     @Override

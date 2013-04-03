@@ -31,7 +31,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // storage = new FileContactRepository("Contacts.txt");
+        //storage = new FileContactRepository("Contacts.txt");
         storage = new WebContactRepository();
         setContentView(R.layout.list);
         ToolbarConfig toolbar = new ToolbarConfig(this, "Contacts");

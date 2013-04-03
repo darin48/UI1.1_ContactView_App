@@ -9,8 +9,8 @@ public interface ContactRepository extends Serializable {
 
     public void connect(Context context);
     public Contact newContact();
-    public Contact lookupContact(int id); // may return null
-    public void deleteContact(int id); // NOP if non-existent
+    public Contact lookupContact(String id); // may return null
+    public void deleteContact(String id); // NOP if non-existent
 
     public LinkedList<Contact> getAllContacts();
 

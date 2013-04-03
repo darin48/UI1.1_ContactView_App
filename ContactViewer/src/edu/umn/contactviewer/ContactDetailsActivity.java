@@ -22,7 +22,7 @@ import android.widget.Toast;
  */
 public class ContactDetailsActivity extends Activity {
     private static final int EDIT_CONTACT = 77;
-    private int contactID;
+    private String contactID;
     private Contact contact;
     TextView nameView;
     TextView titleView;
@@ -37,7 +37,7 @@ public class ContactDetailsActivity extends Activity {
         setContentView(R.layout.detail);
 
         //storage = (ContactRepository)getIntent().getSerializableExtra(ContactListActivity.REPOSITORY);
-        contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
+        contactID = getIntent().getStringExtra(ContactListActivity.CONTACT_ID);
         contact = ContactListActivity.getStorage().lookupContact(contactID);
 
         nameView = (TextView)findViewById(R.id.name_value);
@@ -141,7 +141,7 @@ public class ContactDetailsActivity extends Activity {
                     //contact = (Contact)data.getSerializableExtra("contact");
                     //position = data.getIntExtra("contactIndex", -1);
                     
-                    contactID = getIntent().getIntExtra(ContactListActivity.CONTACT_ID, -1);
+                    contactID = getIntent().getStringExtra(ContactListActivity.CONTACT_ID);
                     contact = ContactListActivity.getStorage().lookupContact(contactID);
                     // TODO: Should we have FileContactRepository store the context now that is doesn't have to be serializable?
                     ContactListActivity.getStorage().flush(this);

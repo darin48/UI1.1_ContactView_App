@@ -27,7 +27,7 @@ public class WebContactRepository implements ContactRepository
 	private static final String URL_BASE = "http://contacts.tinyapollo.com/";
 	private static final String API_KEY = "ui1_1";
 	private GetContactsTask getContactsTask = null;
-	private Map<Integer, Contact> contacts = new HashMap<Integer, Contact>();
+	private Map<String, Contact> contacts = new HashMap<String, Contact>();
 
 	private class GetContactsTask extends AsyncTask<String, Void, LinkedList<Contact> >
 	{
@@ -102,15 +102,14 @@ public class WebContactRepository implements ContactRepository
 	
 	protected Contact newContact(ServiceResult.Contact svc)
 	{
-		Contact result = new Contact(nextID++);
+		Contact result = new WebContact(svc._id);
 		
 		result.setName(svc.name);
 		result.setEmail(svc.email);
 		result.setTitle(svc.title);
 		result.setTwitterId(svc.twitterId);
 		result.setPhone(svc.phone);
-		result.setWebID(svc._id);
-		
+
 		return result;
 	}
 
@@ -129,16 +128,17 @@ public class WebContactRepository implements ContactRepository
 	}
 
 	@Override
-	public Contact lookupContact(int id)
+	public Contact lookupContact(String id)
 	{
-        Contact result = contacts.get(new Integer(id));
+        Contact result = contacts.get(id);
         return result;
 	}
 
 	@Override
-	public void deleteContact(int id)
+	public void deleteContact(String id)
 	{
 		// TODO Auto-generated method stub
+        contacts.remove(id);
 
 	}
 
