@@ -53,6 +53,7 @@ public class FileContactRepository implements ContactRepository, Serializable {
                     c.copyFrom(contact);
                     contact = c;
                 }
+                contact.MarkAsOld(); //mark this contact as old since it came in from the file
                 newContacts.put(contact.getID(), contact);
             }
             contacts = newContacts;
@@ -105,6 +106,8 @@ public class FileContactRepository implements ContactRepository, Serializable {
 
     @Override
     public void flush(Context context) {
+        //TODO: delete contacts in the collection
+
         Contact[] array = new Contact[contacts.size()];
         contacts.values().toArray(array);
         Gson gson = new Gson();
@@ -117,6 +120,8 @@ public class FileContactRepository implements ContactRepository, Serializable {
         } catch (Exception exc) {
             throw new RuntimeException("Cannot store contacts", exc);
         }
+
+        //TODO: mark everything as old since we just saved
     }
 
 }

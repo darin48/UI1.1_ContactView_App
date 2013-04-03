@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 
 import com.google.gson.Gson;
@@ -27,9 +28,11 @@ public class WebContactRepository implements ContactRepository
 	private static final String URL_BASE = "http://contacts.tinyapollo.com/";
 	private static final String API_KEY = "ui1_1";
 	private GetContactsTask getContactsTask = null;
+    private UpdateContactsTask updateContactsTask = null;
 	private Map<String, Contact> contacts = new HashMap<String, Contact>();
 
-	private class GetContactsTask extends AsyncTask<String, Void, LinkedList<Contact> >
+    //THIS IS OUR ASYNC CLASS FOR GETTING CONTACTS
+	private class GetContactsTask extends AsyncTask<Void, Void, ServiceResult>
 	{
 		private ContactListActivity context;
 		
@@ -39,9 +42,9 @@ public class WebContactRepository implements ContactRepository
 		}
 
 		@Override
-		protected LinkedList<Contact> doInBackground(String... params)
+		protected ServiceResult doInBackground(Void... params)
 		{
-			LinkedList<Contact> result = new LinkedList<Contact>();
+			//LinkedList<Contact> result = new LinkedList<Contact>();
 			ServiceResult serviceResult = null;
 			
 			AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android", null);
@@ -50,57 +53,116 @@ public class WebContactRepository implements ContactRepository
 			{
 				HttpResponse response = httpClient.execute(request);
 				Gson gson = new Gson();
-				
 				serviceResult = gson.fromJson(
 						 new InputStreamReader(response.getEntity().getContent()),
 						 ServiceResult.class);
 			}
-			catch (JsonSyntaxException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (JsonIOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (IllegalStateException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            catch (Exception e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 			
 			httpClient.close();
 			
-			for (ServiceResult.Contact svc : serviceResult.contacts)
-			{
-				Contact contact = newContact(svc);
-				contacts.put(contact.getID(), contact);
-                result.add(contact);
-			}
-			
-			return result;
+			//for (ServiceResult.Contact svc : serviceResult.contacts)
+			//{
+			//	Contact contact = newContact(svc);
+			//	contacts.put(contact.getID(), contact);
+            //  result.add(contact);
+			//}
+
+			return serviceResult;
 		}
-		
-		@Override
-		protected void onPostExecute(LinkedList<Contact> contacts)
-		{
-			ArrayAdapter<Contact> listAdapter = context.new ContactAdapter(context, R.layout.list_item, contacts);
-	        // initialize the list view
-	        context.setListAdapter(listAdapter);
-	        
-	        //WebContactRepository.this.contacts = contacts;
-		}
-		
-	}
-	
-	protected Contact newContact(ServiceResult.Contact svc)
+
+        @Override
+        protected void onPostExecute(ServiceResult serviceResult)
+        {
+            contacts.clear(); // clear out the original list, so we can reload it
+            for (ServiceResult.Contact svc : serviceResult.contacts)
+            {
+                Contact contact = getContact(svc);
+                contacts.put(contact.getID(), contact);
+            }
+
+            //We only need to convert to a LinkedList for the ContactAdapter
+            ArrayAdapter<Contact> listAdapter = context.new ContactAdapter(context, R.layout.list_item, getAllContacts());
+            // initialize the list view
+            context.setListAdapter(listAdapter);
+        }
+    }
+
+    //THIS IS OUR ASYNC CLASS FOR UPDATING/INSERTING/DELETING CONTACTS
+    private class UpdateContactsTask extends AsyncTask<Void, Void, ServiceResult>
+    {
+        private Context context;
+
+        public UpdateContactsTask(Context context)
+        {
+            this.context = context;
+        }
+
+        @Override
+        protected ServiceResult doInBackground(Void... params)
+        {
+            ServiceResult serviceResult = null;
+            String fullURL = URL_BASE + "contacts" + "?key=" + API_KEY;
+            AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android", null);
+
+            for (Contact c : contacts.values())
+            {
+                //*** DELETING CONTACTS - DELETE ***
+                if (c.getIsDirty() && c.getIsDeleted() && !c.getIsNew())
+                {
+
+                }
+                //*** INSERTING CONTACTS - POST ***
+                else if (c.getIsDirty() && c.getIsNew())
+                {
+
+                }
+                //*** UPDATING CONTACTS - PUT ***
+                else if (c.getIsDirty())
+                {
+                    fullURL = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
+                    fullURL = fullURL + "&name=" + c.getName();
+
+                    HttpUriRequest request = new HttpPut(fullURL);
+                    try
+                    {
+                        HttpResponse response = httpClient.execute(request);
+                        Gson gson = new Gson();
+
+                        serviceResult = gson.fromJson(
+                                new InputStreamReader(response.getEntity().getContent()),
+                                ServiceResult.class);
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            httpClient.close();
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ServiceResult serviceResult)
+        {
+            // DO NOTHING, Contacts are updated inside the doInBackground
+            //serviceResult will always be NULL
+
+            //We only need to convert to a LinkedList for the ContactAdapter
+            //ArrayAdapter<Contact> listAdapter = context.new ContactAdapter(context, R.layout.list_item, getAllContacts());
+            // initialize the list view
+            //context.setListAdapter(listAdapter);
+        }
+    }
+
+	protected Contact getContact(ServiceResult.Contact svc)
 	{
 		Contact result = new WebContact(svc._id);
 		
@@ -109,6 +171,7 @@ public class WebContactRepository implements ContactRepository
 		result.setTitle(svc.title);
 		result.setTwitterId(svc.twitterId);
 		result.setPhone(svc.phone);
+        result.MarkAsOld();//mark this contact as old since it came in from the data store
 
 		return result;
 	}
@@ -117,7 +180,7 @@ public class WebContactRepository implements ContactRepository
 	public void connect(Context context)
 	{
 		getContactsTask = new GetContactsTask((ContactListActivity)context);
-		getContactsTask.execute("unused");
+		getContactsTask.execute();
 	}
 
 	@Override
@@ -138,8 +201,9 @@ public class WebContactRepository implements ContactRepository
 	public void deleteContact(String id)
 	{
 		// TODO Auto-generated method stub
-        contacts.remove(id);
-
+        Contact c = lookupContact(id);
+        c.MarkAsDeleted();
+        //contacts.remove(id);
 	}
 
 	@Override
@@ -155,8 +219,16 @@ public class WebContactRepository implements ContactRepository
 	@Override
 	public void flush(Context context)
 	{
-		// TODO Auto-generated method stub
-
+        try
+        {
+            updateContactsTask = new UpdateContactsTask(context);
+            updateContactsTask.execute();
+        }
+        catch (Exception e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 	}
 
 }
