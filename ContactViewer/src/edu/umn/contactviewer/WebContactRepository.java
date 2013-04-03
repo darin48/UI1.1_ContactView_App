@@ -2,6 +2,7 @@ package edu.umn.contactviewer;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -106,7 +107,6 @@ public class WebContactRepository implements ContactRepository
         protected ServiceResult doInBackground(Void... params)
         {
             ServiceResult serviceResult = null;
-            String fullURL = URL_BASE + "contacts" + "?key=" + API_KEY;
             AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android", null);
 
             for (Contact c : contacts.values())
@@ -124,12 +124,12 @@ public class WebContactRepository implements ContactRepository
                 //*** UPDATING CONTACTS - PUT ***
                 else if (c.getIsDirty())
                 {
-                    fullURL = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
-                    fullURL = fullURL + "&name=" + c.getName();
-
-                    HttpUriRequest request = new HttpPut(fullURL);
+                    String baseURL = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
+                    String urlParams = "&name=" + c.getName();
                     try
                     {
+                        String URLUTF = baseURL + URLEncoder.encode(urlParams, "utf-8");
+                        HttpUriRequest request = new HttpPut(URLUTF);
                         HttpResponse response = httpClient.execute(request);
                         Gson gson = new Gson();
 
