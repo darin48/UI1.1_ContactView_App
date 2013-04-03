@@ -1,6 +1,7 @@
 package edu.umn.contactviewer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -30,8 +31,9 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        storage = new FileContactRepository("Contacts.txt");
-         setContentView(R.layout.list);
+        // storage = new FileContactRepository("Contacts.txt");
+        storage = new WebContactRepository();
+        setContentView(R.layout.list);
         ToolbarConfig toolbar = new ToolbarConfig(this, "Contacts");
         
         EditText searchText = (EditText) findViewById(R.id.searchText);
@@ -63,7 +65,7 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
 			}
         });
         
-        listAdapter = new ContactAdapter(this, R.layout.list_item, storage.getAllContacts());
+        listAdapter = new ContactAdapter(this, R.layout.list_item, new LinkedList<Contact>());
         // initialize the list view
         setListAdapter(listAdapter);
         ListView lv = getListView();

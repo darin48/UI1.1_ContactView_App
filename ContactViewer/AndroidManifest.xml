@@ -21,5 +21,5 @@
         <activity android:name=".ContactDetailsActivity" android:label="ContactDetails"/>
         <activity android:name=".ContactEditActivity" android:label="ContactEdit"/>
     </application>
-
+	<uses-permission android:name="android.permission.INTERNET" />
 </manifest>

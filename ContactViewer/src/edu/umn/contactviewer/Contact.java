@@ -10,6 +10,7 @@ public class Contact implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private final int _id;
+	private String _webID = "";
 	private String _name = "";
 	private String _phone = "";
 	private String _title = "";
@@ -24,6 +25,16 @@ public class Contact implements Serializable {
 	public int getID()
 	{
 		return _id;
+	}
+	
+	public String getWebID()
+	{
+		return _webID;
+	}
+	
+	public void setWebID(String webID)
+	{
+		_webID = webID;
 	}
 	
 	/** Set the contact's name.
