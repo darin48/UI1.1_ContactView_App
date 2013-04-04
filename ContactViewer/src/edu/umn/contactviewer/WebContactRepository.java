@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import android.app.ProgressDialog;
+import android.os.Handler;
+import android.widget.ProgressBar;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -37,9 +40,23 @@ public class WebContactRepository implements ContactRepository
 	private Map<String, WebContact> contacts = new HashMap<String, WebContact>();
 	private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
+    private static final int PROGRESS = 0x1;
+    private ProgressDialog mProgressDialog;
+    private int mProgressStatus = 0;
+    private Handler mHandler = new Handler();
+    private Context myContext;
+
     //THIS IS OUR ASYNC CLASS FOR GETTING CONTACTS
 	private class GetContactsTask extends AsyncTask<Void, Void, ServiceResult>
 	{
+        @Override
+        protected void onPreExecute() {
+            mProgressDialog = new ProgressDialog(myContext);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setMessage("Downloading contacts ...");
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.show();
+        }
 
 		@Override
 		protected ServiceResult doInBackground(Void... params)
@@ -84,7 +101,7 @@ public class WebContactRepository implements ContactRepository
                 WebContact contact = (WebContact)getContact(svc);
                 contacts.put(contact.getID(), contact);
             }
-
+            mProgressDialog.dismiss();
             notifyListeners();
         }
     }
@@ -92,6 +109,15 @@ public class WebContactRepository implements ContactRepository
     //THIS IS OUR ASYNC CLASS FOR UPDATING/INSERTING/DELETING CONTACTS
     private class UpdateContactsTask extends AsyncTask<Void, Void, ServiceResult>
     {
+
+        @Override
+        protected void onPreExecute() {
+            mProgressDialog = new ProgressDialog(myContext);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setMessage("Synchronizing server ...");
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgressDialog.show();
+        }
 
         @Override
         protected ServiceResult doInBackground(Void... params)
@@ -189,6 +215,7 @@ public class WebContactRepository implements ContactRepository
         @Override
         protected void onPostExecute(ServiceResult serviceResult)
         {
+            mProgressDialog.dismiss();
             notifyListeners();
         }
     }
@@ -210,6 +237,7 @@ public class WebContactRepository implements ContactRepository
 	@Override
 	public void connect(Context context)
 	{
+        myContext = context;
 		refresh();
 	}
 
