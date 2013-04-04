@@ -12,6 +12,7 @@ import java.io.Serializable;
 public class WebContact implements Serializable, Contact {
 
     private static final long serialVersionUID = 1L;
+    private static final String UNSPECIFIED_ID = "TBD";
 
     private final String _id;
     private Boolean _isNew = Boolean.TRUE;
@@ -23,6 +24,10 @@ public class WebContact implements Serializable, Contact {
     private String _email = "";
     private String _twitterId = "";
 
+    protected WebContact()
+    {
+    	this(UNSPECIFIED_ID);
+    }
     protected WebContact(String id)
     {
         _id = id;

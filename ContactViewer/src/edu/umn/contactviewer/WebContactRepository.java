@@ -113,6 +113,7 @@ public class WebContactRepository implements ContactRepository
             AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android", null);
 
             ArrayList<Contact> toDelete = new ArrayList<Contact>();
+            ServiceResult serviceResult = null; // out here just to be visible during debugging
             for (Contact c : contacts.values())
             {
             	if (c.getIsDirty())
@@ -120,7 +121,6 @@ public class WebContactRepository implements ContactRepository
  					try
 					{
  		               	HttpResponse response = null;
- 		               	ServiceResult serviceResult = null;
 
  		               	if (c.getIsDeleted())
 						{
@@ -227,8 +227,9 @@ public class WebContactRepository implements ContactRepository
 	@Override
 	public Contact newContact()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Contact result = new WebContact();
+		contacts.put(result.getID(), result);
+		return result;
 	}
 
 	@Override
