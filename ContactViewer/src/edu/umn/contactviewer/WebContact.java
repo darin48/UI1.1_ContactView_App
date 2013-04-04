@@ -14,7 +14,7 @@ public class WebContact implements Serializable, Contact {
     private static final long serialVersionUID = 1L;
     private static final String UNSPECIFIED_ID = "TBD";
 
-    private final String _id;
+    private String _id;
     private Boolean _isNew = Boolean.TRUE;
     private Boolean _isDirty = Boolean.TRUE;
     private Boolean _isDeleted = Boolean.FALSE;
@@ -37,6 +37,11 @@ public class WebContact implements Serializable, Contact {
     public String getID()
     {
         return _id;
+    }
+    
+    public void setID(String id)
+    {
+    	_id = id;
     }
 
     /** Get the IsNew flag for this contact */
