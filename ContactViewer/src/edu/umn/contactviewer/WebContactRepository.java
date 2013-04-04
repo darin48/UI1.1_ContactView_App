@@ -40,10 +40,7 @@ public class WebContactRepository implements ContactRepository
 	private Map<String, WebContact> contacts = new HashMap<String, WebContact>();
 	private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
-    private static final int PROGRESS = 0x1;
     private ProgressDialog mProgressDialog;
-    private int mProgressStatus = 0;
-    private Handler mHandler = new Handler();
     private Context myContext;
 
     //THIS IS OUR ASYNC CLASS FOR GETTING CONTACTS
