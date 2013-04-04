@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class FileContactRepository implements ContactRepository, Serializable {
     private int nextID = 1;
     private String fileName = null;
     private Map<String, Contact> contacts = new HashMap<String, Contact>();
+    private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
     public FileContactRepository(String fileName) {
         this.fileName = fileName;
@@ -123,5 +125,23 @@ public class FileContactRepository implements ContactRepository, Serializable {
 
         //TODO: mark everything as old since we just saved
     }
+
+	@Override
+	public void addListener(Listener listener)
+	{
+		listeners.add(listener);
+	}
+
+	@Override
+	public void notifyListeners()
+	{
+		for (Listener listener : listeners)
+			listener.notifyRepositoryChanged();
+	}
+	
+	@Override
+	public void refresh()
+	{
+	}
 
 }

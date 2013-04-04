@@ -6,6 +6,7 @@ public class ServiceResult
 	public String message;
 	public Group group;
 	public Contact[] contacts;
+	public Contact contact;
 	
 	public static class Group
 	{

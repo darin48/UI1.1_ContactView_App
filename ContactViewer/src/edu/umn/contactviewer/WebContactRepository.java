@@ -34,17 +34,12 @@ public class WebContactRepository implements ContactRepository
 	private static final String API_KEY = "ui1_1";
 	private GetContactsTask getContactsTask = null;
     private UpdateContactsTask updateContactsTask = null;
-	private Map<String, Contact> contacts = new HashMap<String, Contact>();
+	private Map<String, WebContact> contacts = new HashMap<String, WebContact>();
+	private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
     //THIS IS OUR ASYNC CLASS FOR GETTING CONTACTS
 	private class GetContactsTask extends AsyncTask<Void, Void, ServiceResult>
 	{
-		private ContactListActivity context;
-		
-		public GetContactsTask(ContactListActivity context)
-		{
-			this.context = context;
-		}
 
 		@Override
 		protected ServiceResult doInBackground(Void... params)
@@ -86,105 +81,106 @@ public class WebContactRepository implements ContactRepository
             contacts.clear(); // clear out the original list, so we can reload it
             for (ServiceResult.Contact svc : serviceResult.contacts)
             {
-                Contact contact = getContact(svc);
+                WebContact contact = (WebContact)getContact(svc);
                 contacts.put(contact.getID(), contact);
             }
 
-            //We only need to convert to a LinkedList for the ContactAdapter
-            ArrayAdapter<Contact> listAdapter = context.new ContactAdapter(context, R.layout.list_item, getAllContacts());
-            // initialize the list view
-            context.setListAdapter(listAdapter);
+            notifyListeners();
         }
     }
 
     //THIS IS OUR ASYNC CLASS FOR UPDATING/INSERTING/DELETING CONTACTS
     private class UpdateContactsTask extends AsyncTask<Void, Void, ServiceResult>
     {
-        private Context context;
-
-        public UpdateContactsTask(Context context)
-        {
-            this.context = context;
-        }
 
         @Override
         protected ServiceResult doInBackground(Void... params)
         {
             AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android", null);
 
-            ArrayList<Contact> toDelete = new ArrayList<Contact>();
+            ArrayList<String> toDelete = new ArrayList<String>();
+            ArrayList<WebContact> toAdd = new ArrayList<WebContact>();
             ServiceResult serviceResult = null; // out here just to be visible during debugging
-            for (Contact c : contacts.values())
+            Gson gson = new Gson();
+            for (WebContact c : contacts.values())
             {
-            	if (c.getIsDirty())
-            	{
- 					try
+            	if (!c.getIsDirty())
+            		continue;
+
+            	try
+				{
+		            HttpResponse response = null;
+
+		            if (c.getIsDeleted())
 					{
- 		               	HttpResponse response = null;
-
- 		               	if (c.getIsDeleted())
-						{
-							toDelete.add(c);
-							
-							if (!c.getIsNew())
-							{
-								String url = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
-								HttpUriRequest request = new HttpDelete(url);
-								response = httpClient.execute(request);
-							}
-						}
-						else if (c.getIsNew())
-						{
-						    //*** INSERTING CONTACTS - POST ***
-							String baseURL = URL_BASE + "contacts?key=" + API_KEY;
-						    String urlParams = "&name=" + c.getName()
-						    		+ "&title=" + c.getTitle()
-						    		+ "&email=" + c.getEmail()
-						    		+ "&phone=" + c.getPhone()
-						    		+ "&twitterId=" + c.getTwitterId();
-						    String url = baseURL + URLEncoder.encode(urlParams, "utf-8");
-						    HttpUriRequest request = new HttpPost(url);
-						    response = httpClient.execute(request);
-						}
-						else
-						{
-						    //*** UPDATING CONTACTS - PUT ***
-						    String baseURL = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
-						    String urlParams = "&name=" + c.getName()
-						    		+ "&title=" + c.getTitle()
-						    		+ "&email=" + c.getEmail()
-						    		+ "&phone=" + c.getPhone()
-						    		+ "&twitterId=" + c.getTwitterId();
-						    String URLUTF = baseURL + URLEncoder.encode(urlParams, "utf-8");
-						    HttpUriRequest request = new HttpPut(URLUTF);
-						    response = httpClient.execute(request);
-						     
-						    c.MarkAsOld();
-						}
+						toDelete.add(c.getID());
 						
-						if (response != null)
+						if (!c.getIsNew())
 						{
-						    Gson gson = new Gson();
-
+							String url = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
+							HttpUriRequest request = new HttpDelete(url);
+							response = httpClient.execute(request);
 						    serviceResult = gson.fromJson(
 						            new InputStreamReader(response.getEntity().getContent()),
 						            ServiceResult.class);
-
 						}
 					}
-					catch (Exception e)
+					else if (c.getIsNew())
 					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					    //*** INSERTING CONTACTS - POST ***
+						String baseURL = URL_BASE + "contacts?key=" + API_KEY;
+					    String urlParams = "&name=" + URLEncoder.encode(c.getName(), "utf-8")
+					    		+ "&title=" + URLEncoder.encode(c.getTitle(), "utf-8")
+					    		+ "&email=" + URLEncoder.encode(c.getEmail(), "utf-8")
+					    		+ "&phone=" + URLEncoder.encode(c.getPhone(), "utf-8")
+					    		+ "&twitterId=" + URLEncoder.encode(c.getTwitterId(), "utf-8");
+					    String url = baseURL + urlParams;
+					    HttpUriRequest request = new HttpPost(url);
+					    response = httpClient.execute(request);
+					    serviceResult = gson.fromJson(
+					            new InputStreamReader(response.getEntity().getContent()),
+					            ServiceResult.class);
+					    toDelete.add(c.getID());
+					    c.setID(serviceResult.contact._id);
+					    c.MarkAsOld();
+					    toAdd.add(c);
 					}
-            	}
+					else
+					{
+					    //*** UPDATING CONTACTS - PUT ***
+					    String baseURL = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
+					    String urlParams = "&name=" + URLEncoder.encode(c.getName(), "utf-8")
+					    		+ "&title=" + URLEncoder.encode(c.getTitle(), "utf-8")
+					    		+ "&email=" + URLEncoder.encode(c.getEmail(), "utf-8")
+					    		+ "&phone=" + URLEncoder.encode(c.getPhone(), "utf-8")
+					    		+ "&twitterId=" + URLEncoder.encode(c.getTwitterId(), "utf-8");
+					    String url = baseURL + urlParams;
+					    HttpUriRequest request = new HttpPut(url);
+					    response = httpClient.execute(request);
+					    serviceResult = gson.fromJson(
+					            new InputStreamReader(response.getEntity().getContent()),
+					            ServiceResult.class);
+					     
+					    c.MarkAsOld();
+					}
+				}
+				catch (Exception e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
              }
 
             httpClient.close();
             
-            for (Contact c : toDelete)
+            for (String id : toDelete)
             {
-            	contacts.remove(c.getID());
+            	contacts.remove(id);
+            }
+            
+            for (WebContact c : toAdd)
+            {
+            	contacts.put(c.getID(), c);
             }
 
             return null;
@@ -193,13 +189,7 @@ public class WebContactRepository implements ContactRepository
         @Override
         protected void onPostExecute(ServiceResult serviceResult)
         {
-            // DO NOTHING, Contacts are updated inside the doInBackground
-            //serviceResult will always be NULL
-
-            //We only need to convert to a LinkedList for the ContactAdapter
-            //ArrayAdapter<Contact> listAdapter = context.new ContactAdapter(context, R.layout.list_item, getAllContacts());
-            // initialize the list view
-            //context.setListAdapter(listAdapter);
+            notifyListeners();
         }
     }
 
@@ -220,14 +210,13 @@ public class WebContactRepository implements ContactRepository
 	@Override
 	public void connect(Context context)
 	{
-		getContactsTask = new GetContactsTask((ContactListActivity)context);
-		getContactsTask.execute();
+		refresh();
 	}
 
 	@Override
 	public Contact newContact()
 	{
-		Contact result = new WebContact();
+		WebContact result = new WebContact();
 		contacts.put(result.getID(), result);
 		return result;
 	}
@@ -245,8 +234,7 @@ public class WebContactRepository implements ContactRepository
 		// TODO Auto-generated method stub
         Contact c = lookupContact(id);
         c.MarkAsDeleted();
-        //contacts.remove(id);
-	}
+ 	}
 
 	@Override
 	public LinkedList<Contact> getAllContacts()
@@ -263,7 +251,7 @@ public class WebContactRepository implements ContactRepository
 	{
         try
         {
-            updateContactsTask = new UpdateContactsTask(context);
+            updateContactsTask = new UpdateContactsTask();
             updateContactsTask.execute();
         }
         catch (Exception e)
@@ -271,6 +259,26 @@ public class WebContactRepository implements ContactRepository
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+	}
+
+	@Override
+	public void addListener(Listener listener)
+	{
+		listeners.add(listener);
+	}
+
+	@Override
+	public void notifyListeners()
+	{
+		for (Listener listener : listeners)
+			listener.notifyRepositoryChanged();
+	}
+	
+	@Override
+	public void refresh()
+	{
+		getContactsTask = new GetContactsTask();
+		getContactsTask.execute();
 	}
 
 }

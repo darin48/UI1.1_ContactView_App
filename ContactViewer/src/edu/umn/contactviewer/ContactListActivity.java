@@ -19,7 +19,7 @@ import android.widget.AdapterView.*;
 /** Displays a list of contacts.
  *
  */
-public class ContactListActivity extends ListActivity implements OnItemClickListener {
+public class ContactListActivity extends ListActivity implements OnItemClickListener, ContactRepository.Listener {
     private static ContactRepository storage = null;
 //    private List<Contact> contacts;
     private static final int DETAILS_REQUEST = 13;
@@ -39,15 +39,16 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
         EditText searchText = (EditText) findViewById(R.id.searchText);
         
         storage.connect(this);
+        storage.addListener(this);
 //        contacts = storage.getAllContacts();
 
         // setup the about button
         Button button = toolbar.getToolbarRightButton();
-        button.setText(R.string.about);
+        button.setText(R.string.refresh);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ContactListActivity.this, "This is a sample application made for SENG 5199-1 in the MSSE program.", Toast.LENGTH_LONG).show();
+                storage.refresh();
             }
         });
         Button leftButton = toolbar.getToolbarLeftButton();
@@ -232,11 +233,19 @@ public class ContactListActivity extends ListActivity implements OnItemClickList
     @Override
     public void onResume() {
         super.onResume();
-     //   getStorage().flush(this);
+//		getStorage().flush(this);
         listAdapter = new ContactAdapter(this, R.layout.list_item, getStorage().getAllContacts());
         // initialize the list view
         setListAdapter(listAdapter);
     }
+
+	@Override
+	public void notifyRepositoryChanged()
+	{
+       listAdapter = new ContactAdapter(this, R.layout.list_item, getStorage().getAllContacts());
+        // initialize the list view
+        setListAdapter(listAdapter);
+	}
 
  /*   @Override
     public void onDestroy() {

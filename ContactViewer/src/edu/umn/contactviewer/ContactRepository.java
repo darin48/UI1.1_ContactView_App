@@ -6,6 +6,11 @@ import java.util.LinkedList;
 import android.content.Context;
 
 public interface ContactRepository extends Serializable {
+	
+	public static interface Listener
+	{
+		public void notifyRepositoryChanged();
+	}
 
     public void connect(Context context);
     public Contact newContact();
@@ -15,5 +20,11 @@ public interface ContactRepository extends Serializable {
     public LinkedList<Contact> getAllContacts();
 
     public void flush(Context context); // ensure that the data is synced to the media
+    
+    public void addListener(Listener listener);
+    
+    public void notifyListeners();
+    
+    public void refresh();
 
 }
