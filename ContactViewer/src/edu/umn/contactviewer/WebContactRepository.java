@@ -2,13 +2,17 @@ package edu.umn.contactviewer;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 
@@ -106,45 +110,82 @@ public class WebContactRepository implements ContactRepository
         @Override
         protected ServiceResult doInBackground(Void... params)
         {
-            ServiceResult serviceResult = null;
             AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android", null);
 
+            ArrayList<Contact> toDelete = new ArrayList<Contact>();
             for (Contact c : contacts.values())
             {
-                //*** DELETING CONTACTS - DELETE ***
-                if (c.getIsDirty() && c.getIsDeleted() && !c.getIsNew())
-                {
+            	if (c.getIsDirty())
+            	{
+ 					try
+					{
+ 		               	HttpResponse response = null;
+ 		               	ServiceResult serviceResult = null;
 
-                }
-                //*** INSERTING CONTACTS - POST ***
-                else if (c.getIsDirty() && c.getIsNew())
-                {
+ 		               	if (c.getIsDeleted())
+						{
+							toDelete.add(c);
+							
+							if (!c.getIsNew())
+							{
+								String url = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
+								HttpUriRequest request = new HttpDelete(url);
+								response = httpClient.execute(request);
+							}
+						}
+						else if (c.getIsNew())
+						{
+						    //*** INSERTING CONTACTS - POST ***
+							String baseURL = URL_BASE + "contacts?key=" + API_KEY;
+						    String urlParams = "&name=" + c.getName()
+						    		+ "&title=" + c.getTitle()
+						    		+ "&email=" + c.getEmail()
+						    		+ "&phone=" + c.getPhone()
+						    		+ "&twitterId=" + c.getTwitterId();
+						    String url = baseURL + URLEncoder.encode(urlParams, "utf-8");
+						    HttpUriRequest request = new HttpPost(url);
+						    response = httpClient.execute(request);
+						}
+						else
+						{
+						    //*** UPDATING CONTACTS - PUT ***
+						    String baseURL = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
+						    String urlParams = "&name=" + c.getName()
+						    		+ "&title=" + c.getTitle()
+						    		+ "&email=" + c.getEmail()
+						    		+ "&phone=" + c.getPhone()
+						    		+ "&twitterId=" + c.getTwitterId();
+						    String URLUTF = baseURL + URLEncoder.encode(urlParams, "utf-8");
+						    HttpUriRequest request = new HttpPut(URLUTF);
+						    response = httpClient.execute(request);
+						     
+						    c.MarkAsOld();
+						}
+						
+						if (response != null)
+						{
+						    Gson gson = new Gson();
 
-                }
-                //*** UPDATING CONTACTS - PUT ***
-                else if (c.getIsDirty())
-                {
-                    String baseURL = URL_BASE + "contacts/" + c.getID() + "?key=" + API_KEY;
-                    String urlParams = "&name=" + c.getName();
-                    try
-                    {
-                        String URLUTF = baseURL + URLEncoder.encode(urlParams, "utf-8");
-                        HttpUriRequest request = new HttpPut(URLUTF);
-                        HttpResponse response = httpClient.execute(request);
-                        Gson gson = new Gson();
+						    serviceResult = gson.fromJson(
+						            new InputStreamReader(response.getEntity().getContent()),
+						            ServiceResult.class);
 
-                        serviceResult = gson.fromJson(
-                                new InputStreamReader(response.getEntity().getContent()),
-                                ServiceResult.class);
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            }
+						}
+					}
+					catch (Exception e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            	}
+             }
 
             httpClient.close();
+            
+            for (Contact c : toDelete)
+            {
+            	contacts.remove(c.getID());
+            }
 
             return null;
         }
